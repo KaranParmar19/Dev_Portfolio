@@ -1,0 +1,269 @@
+@import "tailwindcss";
+
+:root {
+  --background: #fee685;
+  --foreground: #1b1b1a;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-kaku: var(--font-kaku);
+  --font-syne: var(--font-syne);
+  --font-neulis: var(--font-neulis);
+  --font-futura: var(--font-futura);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #fee685;
+    --foreground: #1b1b1a;
+  }
+}
+
+::selection {
+  background-color: #000;
+  color: #1b1b1a;
+}
+
+/* For older Firefox browsers */
+::-moz-selection {
+  background-color: #000;
+  color: #fff;
+}
+
+@utility max-w-container {
+  @apply px-2.5 max-w-400 mx-auto sm:px-4 overflow-hidden;
+}
+
+@utility section-title {
+  @apply text-4xl md:text-5xl;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.top-nav-viewport {
+  position: absolute;
+  z-index: 1000;
+  top: 24px;
+  left: 50%;
+  width: max-content;
+  max-width: calc(100vw - 24px);
+  transform: translateX(-50%);
+}
+
+.top-nav-capsule {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 50px;
+  width: max-content;
+  min-height: 60px;
+  box-sizing: border-box;
+  padding: 10px 20px;
+  overflow: visible;
+  color: #111;
+  background: linear-gradient(180deg, rgb(255 255 255 / 96%) 0%, rgb(255 255 255 / 90%) 100%);
+  border: 1px solid #fff;
+  border-radius: 100px;
+  box-shadow: 0 6px 24px rgb(0 0 0 / 12%);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+.top-nav-brand-row {
+  display: flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+}
+
+.top-nav-brand {
+  display: grid;
+  width: 82px;
+  height: 42px;
+  place-items: center;
+  padding: 4px;
+  border: 0;
+  border-radius: 3px;
+  background: #fff;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.top-nav-toggle {
+  display: grid;
+  width: 34px;
+  height: 34px;
+  place-items: center;
+  padding: 0;
+  color: #222;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  cursor: pointer;
+}
+
+.top-nav-brand img {
+  display: block;
+  width: 68px;
+  height: 30px;
+  object-fit: contain;
+}
+
+.top-nav-items {
+  display: flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+}
+
+.top-nav-link {
+  display: flex;
+  flex: none;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 12px;
+  min-height: 40px;
+  padding: 8px 12px;
+  overflow: hidden;
+  color: #595959;
+  border: 1px solid transparent;
+  border-radius: 100px;
+  text-decoration: none;
+  transition: color 180ms ease, background-color 180ms ease, border-color 180ms ease;
+}
+
+.top-nav-link:hover,
+.top-nav-link:focus-visible {
+  color: #111;
+  border-color: #d0d0d0;
+  background: rgb(0 0 0 / 5%);
+  outline: none;
+}
+
+.top-nav-link-label {
+  display: inline-block;
+  overflow: hidden;
+  width: 0;
+  opacity: 0;
+  color: inherit;
+  font-family: var(--font-neulis), sans-serif;
+  font-size: 15px;
+  font-weight: 400;
+  line-height: 1.4;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+
+.curtain-load-screen {
+  position: fixed;
+  z-index: 2147483000;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.gooey-text-reveal {
+  position: relative;
+  width: 100%;
+}
+
+.gooey-text-defs {
+  position: absolute;
+  width: 0;
+  height: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.scroll-top-progress {
+  position: fixed;
+  z-index: 1200;
+  right: 24px;
+  bottom: 76px;
+  display: grid;
+  width: 52px;
+  height: 52px;
+  place-items: center;
+  padding: 0;
+  color: #000;
+  border: 0;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 8px 30px rgb(0 0 0 / 20%);
+  cursor: pointer;
+  touch-action: manipulation;
+}
+
+.scroll-top-progress:focus-visible {
+  outline: 2px solid #000;
+  outline-offset: 4px;
+}
+
+.scroll-top-progress-ring {
+  position: absolute;
+  overflow: visible;
+  color: #000;
+  pointer-events: none;
+}
+
+.scroll-top-progress-icon {
+  position: relative;
+  z-index: 1;
+  width: 22px;
+  height: 22px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  pointer-events: none;
+}
+
+@media (max-width: 640px) {
+  .top-nav-viewport {
+    top: 12px;
+    left: 50%;
+    width: calc(100vw - 24px);
+    transform: translateX(-50%);
+  }
+
+  .top-nav-capsule--mobile {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 15px;
+    width: 97%;
+    margin: 0 auto;
+    padding: 10px 20px 15px;
+    border-radius: 30px;
+  }
+
+  .top-nav-capsule--mobile .top-nav-brand-row {
+    justify-content: space-between;
+    width: 95%;
+    margin: 0 auto;
+  }
+
+  .top-nav-capsule--mobile .top-nav-items {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 7px;
+    width: 100%;
+  }
+
+  .top-nav-capsule--mobile .top-nav-link {
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .scroll-top-progress {
+    right: 16px;
+    bottom: 64px;
+  }
+}
