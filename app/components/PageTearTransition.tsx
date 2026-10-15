@@ -99,6 +99,10 @@ export default function PageTearTransition({
 
     const span = `calc(50% + ${depth / 2}%)`;
 
+    const isDarkSlate =
+        color === '#1e2530' ||
+        color.toLowerCase().includes('1e2530');
+
     const isMint =
         color === '#dcfce7' ||
         color.toLowerCase().includes('dcfce7');
@@ -119,7 +123,9 @@ export default function PageTearTransition({
         bottom: 0,
         width: span,
         backgroundColor: color,
-        backgroundImage: isMint
+        backgroundImage: isDarkSlate
+            ? 'linear-gradient(135deg, #283344 0%, #151b24 100%)'
+            : isMint
             ? 'linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%)'
             : isCream
             ? 'linear-gradient(135deg, #f7f5ef 0%, #ede8de 100%)'
@@ -131,7 +137,9 @@ export default function PageTearTransition({
         pointerEvents: 'none',
         willChange: 'transform',
         zIndex: 2147483000,
-        boxShadow: isMint
+        boxShadow: isDarkSlate
+            ? '0 0 32px rgba(15, 23, 42, 0.55)'
+            : isMint
             ? '0 0 32px rgba(16, 185, 129, 0.28)'
             : isCream
             ? '0 0 32px rgba(0, 0, 0, 0.32)'

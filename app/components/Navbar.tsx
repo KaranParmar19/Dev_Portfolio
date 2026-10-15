@@ -50,7 +50,7 @@ const Navbar = ({ isHeroAnimationDone: _isHeroAnimationDone }: NavbarProps) => {
         if (link === '#about' || link === '#skills' || link === '#journey') {
             let tearColor = '#1b1b1a';
             if (link === '#skills') tearColor = '#f4f1eb';
-            if (link === '#journey') tearColor = '#dcfce7'; // user requested mint green from image
+            if (link === '#journey') tearColor = '#1e2530'; // Dark midnight slate (dark, rich, but not pure black)
             window.dispatchEvent(new CustomEvent('portfolio:page-tear-navigation', {
                 detail: { link, color: tearColor },
             }));
