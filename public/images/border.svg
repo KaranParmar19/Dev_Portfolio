@@ -1,0 +1,14 @@
+<svg
+      width={1480}
+      height={176}
+      viewBox="0 0 1480 176"
+      fill="none"
+    >
+      <path d="M1480 150.5H317" stroke="#000" strokeDasharray={1163} />
+      <path
+        d="M316.5 151V36l-79 138V2l-91 149"
+        stroke="#000"
+        strokeDasharray={620.604}
+      />
+      <path d="M147 150.5H0" stroke="#000" strokeDasharray={147} />
+    </svg>
