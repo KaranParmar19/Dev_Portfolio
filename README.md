@@ -20,20 +20,6 @@
 
 ---
 
-## ✦ Live Preview
-
-Experience the live application hosted on Vercel:
-
-👉 **[https://karanporfolio.vercel.app/](https://karanporfolio.vercel.app/)**
-
-```
-┌─────────────────────────────────────────────────────────────┐
-│  🌐 Live URL: https://karanporfolio.vercel.app/             │
-│  ⚡ Stack: Next.js 16 · React 19 · GSAP · Framer Motion     │
-│  🎨 Style: Tactile Scrapbook × Brutalist Architecture       │
-└─────────────────────────────────────────────────────────────┘
-```
-
 
 ## ✦ Connect
 
