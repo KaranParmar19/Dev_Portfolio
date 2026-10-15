@@ -14,7 +14,7 @@
 
 > **Tactile, kinetic, and engineering-driven.** A digital workspace balancing brutalist scrapbook aesthetics with fluid 60fps micro-interactions, reactive physics, and modern web architecture.
 
-[Explore Live Portfolio ↗](https://karanporfolio.vercel.app/) · [Report Issue](https://github.com/KaranParmar19/Dev_Portfolio/issues) · [Connect on LinkedIn](https://www.linkedin.com/in/KaranParmar19)
+[Explore Live Portfolio ↗](https://karanporfolio.vercel.app/) · [Report Issue](https://github.com/KaranParmar19/Dev_Portfolio/issues) · [Connect on LinkedIn](https://www.linkedin.com/in/karan-parmar-280991274/)
 
 </div>
 
@@ -25,7 +25,7 @@
 
 - **Live Website**: [karanporfolio.vercel.app](https://karanporfolio.vercel.app/)
 - **GitHub**: [@KaranParmar19](https://github.com/KaranParmar19)
-- **LinkedIn**: [Karan Parmar](https://www.linkedin.com/in/KaranParmar19)
+- **LinkedIn**: [Karan Parmar](https://www.linkedin.com/in/karan-parmar-280991274/)
 
 ---
 

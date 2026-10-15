@@ -160,7 +160,7 @@ const ContactPage = () => {
                         />
                         <ArrowedLink
                             label="LinkedIn"
-                            url="https://www.linkedin.com/in/KaranParmar19"
+                            url="https://www.linkedin.com/in/karan-parmar-280991274/"
                             openInNewTab
                             textColor="#111111"
                             lineColor="rgba(0,0,0,0.25)"
