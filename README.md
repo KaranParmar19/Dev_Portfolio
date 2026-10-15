@@ -25,6 +25,7 @@
 
 - **Live Website**: [karanporfolio.vercel.app](https://karanporfolio.vercel.app/)
 - **GitHub**: [@KaranParmar19](https://github.com/KaranParmar19)
+- **LeetCode**: [@Karan_Parmar](https://leetcode.com/u/Karan_Parmar)
 - **LinkedIn**: [Karan Parmar](https://www.linkedin.com/in/karan-parmar-280991274/)
 
 ---

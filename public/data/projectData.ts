@@ -25,7 +25,7 @@ export const projectData: ProjectType[] = [
             'Python',
             'TypeScript'
         ],
-        live: 'https://github.com/Karan19',
+        live: 'https://github.com/KaranParmar19',
         img: '/projectImg/devlens-architecture.png',
         gallery: [
             '/projectImg/devlens-architecture.png',
@@ -49,7 +49,7 @@ export const projectData: ProjectType[] = [
             'Express.js',
             'TypeScript'
         ],
-        live: 'https://github.com/Karan19',
+        live: 'https://github.com/KaranParmar19',
         img: '/projectImg/lantern.png',
         gallery: [
             '/projectImg/lantern.png',
@@ -73,7 +73,7 @@ export const projectData: ProjectType[] = [
             'Fabric.js',
             'Tailwind CSS'
         ],
-        live: 'https://github.com/Karan19',
+        live: 'https://github.com/KaranParmar19',
         img: '/projectImg/voxa.png',
         gallery: [
             '/projectImg/voxa-hero.png',

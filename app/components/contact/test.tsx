@@ -144,7 +144,7 @@ const ContactPage = () => {
                     <div className="py-4 md:py-8 lg:py-12 flex flex-col justify-center items-end text-right -gap-y-1 sm:gap-y-4 font-bold text-base md:text-3xl lg:text-4xl uppercase w-full">
                         <ArrowedLink
                             label="LeetCode"
-                            url="https://leetcode.com/u/KaranParmar19"
+                            url="https://leetcode.com/u/Karan_Parmar"
                             openInNewTab
                             textColor="#111111"
                             lineColor="rgba(0,0,0,0.25)"
@@ -152,7 +152,7 @@ const ContactPage = () => {
                         />
                         <ArrowedLink
                             label="Github"
-                            url="https://github.com/Karan19"
+                            url="https://github.com/KaranParmar19"
                             openInNewTab
                             textColor="#111111"
                             lineColor="rgba(0,0,0,0.25)"
