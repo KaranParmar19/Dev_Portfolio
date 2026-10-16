@@ -1,7 +1,7 @@
 <div align="center">
 
 # `KARAN PARMAR`
-### Creative Developer · Full-Stack Engineer · Systems Builder
+### Software Developer · Full-Stack Engineer · 
 
 <p align="center">
   <a href="https://karanporfolio.vercel.app/" target="_blank">
