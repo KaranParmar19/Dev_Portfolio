@@ -40,6 +40,11 @@ const Neulis_Neue = localFont({
   variable: '--font-neulis',
   display: 'swap',
 });
+const excalifont = localFont({
+  src: './fonts/Excalifont-Regular.woff2',
+  variable: '--font-excalifont',
+  display: 'swap',
+});
 
 export const metadata: Metadata = {
   title: "Karan Parmar - Portfolio",
@@ -55,7 +60,7 @@ export default function RootLayout({
     <html
       lang="en"
       suppressHydrationWarning
-      className={`${kaku.variable} ${syne.variable} ${Neulis_Neue.variable} ${futura.variable} ${spaceGrotesk.variable} ${caveat.variable} h-full antialiased `}
+      className={`${kaku.variable} ${syne.variable} ${Neulis_Neue.variable} ${futura.variable} ${spaceGrotesk.variable} ${caveat.variable} ${excalifont.variable} h-full antialiased `}
     >
       <body className="min-h-full  flex flex-col" suppressHydrationWarning>
         <script

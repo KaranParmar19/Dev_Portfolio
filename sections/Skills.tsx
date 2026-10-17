@@ -7,488 +7,231 @@ import { useGSAP } from '@gsap/react';
 import Image from 'next/image';
 import {
     Layers,
-    Cpu,
+    Sparkles,
     Server,
     Database,
-    Sparkles,
     Zap,
-    Terminal,
     Code2,
-    Wrench,
+    Terminal,
+    Cpu,
+    Activity,
     ArrowUpRight,
+    ArrowDownRight,
     CheckCircle2,
     Asterisk,
     Flame,
-    Box,
+    Play,
     Workflow,
     Braces,
     Cloud,
-    Activity,
+    Gauge,
+    GitBranch,
+    Box,
+    Radio,
+    Search,
 } from 'lucide-react';
-import SVGPathAnimation from '@/app/components/SVGPathAnimation';
 import LiquidHeading from '@/app/components/LiquidHeading';
+import SVGPathAnimation from '@/app/components/SVGPathAnimation';
+import CountUp from '@/app/components/CountUp';
+import { SkillIcon } from '@/app/components/SkillIcons';
 
 gsap.registerPlugin(ScrollTrigger);
 gsap.config({ force3D: true });
 
-// ─── Filter Categories ───────────────────────────────────────────────────────
-export const toolkitCategories = [
-    { id: 'all',       label: 'All Stack (32)',        icon: Zap,      count: 32 },
-    { id: 'frontend',  label: 'Frontend',              icon: Layers,   count: 8  },
-    { id: 'ai',        label: 'AI & Cloud',            icon: Sparkles, count: 8  },
-    { id: 'backend',   label: 'Backend & Infra',       icon: Server,   count: 8  },
-    { id: 'languages', label: 'Languages & Databases', icon: Database, count: 8  },
-] as const;
+// ─── Types & Data ────────────────────────────────────────────────────────────
+type CategoryId = 'all' | 'frontend' | 'aicloud' | 'backend' | 'languages';
+type ProjectId = 'all' | 'DevLens AI' | 'Lantern APM' | 'Voxa Workspace';
 
-export type ToolkitCategory = typeof toolkitCategories[number]['id'];
+interface SkillItem {
+    name: string;
+    role: string;
+    glyph: string;
+    glyphBg: string;
+    projects?: ProjectId[];
+    highlight?: boolean;
+}
 
-// ─── Shared Paper Header Sub-component ───────────────────────────────────────
-function PaperHead({
-    category,
-    tag,
-    icon: Icon,
-}: {
-    category: string;
-    tag: string;
+const filterCategories: {
+    id: CategoryId;
+    label: string;
+    count: number;
+    dotColor: string;
     icon: React.ElementType;
+}[] = [
+    { id: 'all',       label: 'Everything',            count: 32, dotColor: '#fef08a', icon: Zap      },
+    { id: 'frontend',  label: 'Frontend Core',         count: 8,  dotColor: '#bbf2f6', icon: Layers   },
+    { id: 'aicloud',   label: 'AI & Cloud',            count: 8,  dotColor: '#fecdd3', icon: Sparkles },
+    { id: 'backend',   label: 'Backend & Infra',       count: 8,  dotColor: '#fef08a', icon: Server   },
+    { id: 'languages', label: 'Languages & Databases', count: 8,  dotColor: '#dcfce7', icon: Database },
+];
+
+const projectFilters: { id: ProjectId; label: string; badge: string }[] = [
+    { id: 'all',            label: 'All Stack',      badge: '32 Tools' },
+    { id: 'DevLens AI',     label: 'DevLens AI',     badge: 'RAG + FastAPI' },
+    { id: 'Lantern APM',    label: 'Lantern APM',    badge: 'Node + Influx' },
+    { id: 'Voxa Workspace', label: 'Voxa Workspace', badge: 'MERN + WebRTC' },
+];
+
+const frontendSkills: SkillItem[] = [
+    { name: 'React.js',      role: 'Component Architecture, Custom Hooks & Concurrent UI', glyph: '⚛',  glyphBg: '#61dafb', projects: ['DevLens AI', 'Lantern APM', 'Voxa Workspace'], highlight: true },
+    { name: 'Next.js',       role: 'App Router, SSR, Server Actions & Edge Middleware',    glyph: 'N',  glyphBg: '#f4f1eb', projects: ['DevLens AI'], highlight: true },
+    { name: 'TypeScript',    role: 'Strict Type-Safe Contracts, Generics & Schemas',       glyph: 'TS', glyphBg: '#3178c6', projects: ['DevLens AI', 'Lantern APM'], highlight: true },
+    { name: 'JavaScript',    role: 'ES6+ Async Runtime, Event Loop & DOM APIs',            glyph: 'JS', glyphBg: '#f7df1e', projects: ['Voxa Workspace'] },
+    { name: 'Tailwind CSS',  role: 'Utility-First Design Tokens & Neo-Brutalist Systems',  glyph: 'TW', glyphBg: '#38bdf8', projects: ['DevLens AI', 'Lantern APM', 'Voxa Workspace'] },
+    { name: 'Fabric.js',     role: 'Interactive 60fps HTML5 Whiteboard & Vector Canvas',   glyph: '🎨', glyphBg: '#f472b6', projects: ['Voxa Workspace'], highlight: true },
+    { name: 'HTML5 & CSS3',  role: 'Semantic Accessibility, Grid & Keyframe Physics',      glyph: 'H5', glyphBg: '#f97316', projects: ['Voxa Workspace'] },
+    { name: 'Responsive UI', role: 'Fluid Multi-Device Viewports & Adaptive Breakpoints',  glyph: '📱', glyphBg: '#a855f7', projects: ['DevLens AI', 'Lantern APM', 'Voxa Workspace'] },
+];
+
+const aiSkills: SkillItem[] = [
+    { name: 'LangChain',             role: 'Agentic Chains, Tool Calling & Context Orchestration', glyph: '🦜', glyphBg: '#10b981', projects: ['DevLens AI'], highlight: true },
+    { name: 'RAG & Embeddings',      role: 'Semantic Vector Search, Chunking & AST Grounding',     glyph: '◈',  glyphBg: '#8b5cf6', projects: ['DevLens AI'], highlight: true },
+    { name: 'OpenAI API',            role: 'LLM Completions, Streaming & Structured JSON Outputs', glyph: '◎',  glyphBg: '#f4f1eb', projects: ['DevLens AI'] },
+    { name: 'Claude Code & Copilot', role: 'AI-Augmented Engineering, Debugging & Pair Workflows', glyph: '✦',  glyphBg: '#d97757', projects: ['DevLens AI', 'Lantern APM'] },
+];
+
+const cloudSkills: SkillItem[] = [
+    { name: 'AWS Cloud',            role: 'EC2, S3, IAM & Scalable Cloud Infrastructure',         glyph: '☁',  glyphBg: '#ff9900', projects: ['DevLens AI', 'Lantern APM'], highlight: true },
+    { name: 'Docker',               role: 'Multi-Stage Container Images & Compose Networks',      glyph: '🐳', glyphBg: '#2496ed', projects: ['DevLens AI', 'Lantern APM'], highlight: true },
+    { name: 'CI/CD Pipelines',      role: 'Automated Build, Lint & Zero-Downtime Deployments',    glyph: '⚙',  glyphBg: '#14b8a6', projects: ['DevLens AI', 'Lantern APM'] },
+    { name: 'Git / GitHub Actions', role: 'Branch Workflows, PR Automation & Release Runners',    glyph: '⎇',  glyphBg: '#f05032', projects: ['DevLens AI', 'Lantern APM', 'Voxa Workspace'] },
+];
+
+const backendRuntimeSkills: SkillItem[] = [
+    { name: 'FastAPI',    role: 'High-Performance Async Python REST & Dependency Injection', glyph: '⚡', glyphBg: '#009688', projects: ['DevLens AI'], highlight: true },
+    { name: 'Node.js',    role: 'Non-Blocking Event-Driven Server Runtime & Streams',        glyph: '⬢',  glyphBg: '#339933', projects: ['Lantern APM', 'Voxa Workspace'], highlight: true },
+    { name: 'Express.js', role: 'Modular REST Routing, Rate-Limiting & Auth Middleware',     glyph: 'EX', glyphBg: '#f4f1eb', projects: ['Lantern APM', 'Voxa Workspace'] },
+];
+
+const backendQueueSkills: SkillItem[] = [
+    { name: 'Redis',               role: 'In-Memory Pub/Sub, Caching & Distributed Locks',       glyph: '◆',  glyphBg: '#dc382d', projects: ['DevLens AI', 'Lantern APM'], highlight: true },
+    { name: 'Celery',              role: 'Distributed Python Task Workers & AST Indexing Jobs',  glyph: '🌿', glyphBg: '#37814a', projects: ['DevLens AI'] },
+    { name: 'BullMQ',              role: 'Robust Node.js Job Queues, Retries & Telemetry Drain', glyph: '🐂', glyphBg: '#e11d48', projects: ['Lantern APM'], highlight: true },
+    { name: 'Socket.IO',           role: 'Bi-Directional Event Rooms & Live APM Dashboards',     glyph: '🔌', glyphBg: '#f4f1eb', projects: ['Lantern APM', 'Voxa Workspace'] },
+    { name: 'WebSockets & WebRTC', role: 'Low-Latency P2P Media Streams & Live Cursor Sync',     glyph: '📡', glyphBg: '#2563eb', projects: ['DevLens AI', 'Voxa Workspace'], highlight: true },
+];
+
+const languageSkills: SkillItem[] = [
+    { name: 'Python',              role: 'AI Pipelines, FastAPI Backends & Async Scripting',     glyph: 'PY', glyphBg: '#3776ab', projects: ['DevLens AI'], highlight: true },
+    { name: 'C/C++',               role: 'Memory-Aware Systems, Pointers & Competitive DSA',     glyph: 'C+', glyphBg: '#00599c', highlight: true },
+    { name: 'PostgreSQL',          role: 'ACID Relational Storage, Indexing & Vector Queries',   glyph: 'PG', glyphBg: '#336791', projects: ['DevLens AI'], highlight: true },
+    { name: 'MongoDB',             role: 'Flexible Document Schemas & Aggregation Pipelines',    glyph: '🍃', glyphBg: '#47a248', projects: ['Voxa Workspace'] },
+    { name: 'MySQL',               role: 'Structured Relational Modeling & Joins Optimization',  glyph: 'SQL',glyphBg: '#4479a1' },
+    { name: 'InfluxDB',            role: 'High-Ingestion Time-Series Telemetry & Metrics Store', glyph: '📈', glyphBg: '#22adf6', projects: ['Lantern APM'], highlight: true },
+    { name: 'DSA & Algorithms',    role: '400+ Problems Solved · Trees, Graphs, DP & Greedy',    glyph: '∑',  glyphBg: '#f59e0b', highlight: true },
+    { name: 'System Design & OOP', role: 'SOLID Principles, Scalability, Caching & Sharding',    glyph: '🏛', glyphBg: '#f4f1eb', projects: ['DevLens AI', 'Lantern APM', 'Voxa Workspace'] },
+];
+
+// ─── Interactive Skill Pill Component (Image 4 Style with Real Icons) ────────
+const pillTilts = ['-rotate-1', 'rotate-1', '-rotate-2', 'rotate-2', 'rotate-0'];
+
+function ToolPill({
+    item,
+    activeProject,
+    onHover,
+    index = 0,
+}: {
+    item: SkillItem;
+    activeProject: ProjectId;
+    onHover: (item: SkillItem) => void;
+    index?: number;
 }) {
+    const isProjectMatch =
+        activeProject === 'all' || (item.projects && item.projects.includes(activeProject));
+    const tilt = pillTilts[index % pillTilts.length];
+
     return (
-        <div className="paper-head">
-            <span className="category-tag">
-                <Icon />
-                {category}
+        <div
+            onMouseEnter={() => onHover(item)}
+            onClick={() => onHover(item)}
+            className={`group relative inline-flex items-center gap-2 bg-[#fffdf2] border border-[#111111]/30 px-3 py-1.5 text-xs sm:text-[13px] font-bold text-[#111111] ${tilt} transition-all duration-150 cursor-pointer select-none ${
+                isProjectMatch
+                    ? 'hover:rotate-0 hover:-translate-y-0.5 hover:bg-[#fef08a] hover:border-[#111111] shadow-[1.5px_1.5px_0_#111111]'
+                    : 'opacity-35 grayscale'
+            } ${activeProject !== 'all' && isProjectMatch ? 'ring-2 ring-[#111111] bg-[#fef08a]' : ''}`}
+        >
+            {/* Real Official Brand SVG Icon */}
+            <span className="shrink-0 flex items-center justify-center w-4 h-4">
+                <SkillIcon name={item.name} className="w-4 h-4 object-contain" />
             </span>
-            <span className="head-code">{tag}</span>
+
+            {/* Tool Name */}
+            <span className="tracking-tight">{item.name}</span>
+
+            {/* Core Star Indicator */}
+            {item.highlight && (
+                <span
+                    className="w-1.5 h-1.5 rounded-full bg-[#f3865e] shrink-0"
+                    title="Primary Production Stack"
+                />
+            )}
+
+            {/* Scrapbook Popover Tooltip on Hover */}
+            <div
+                role="tooltip"
+                className="pointer-events-none absolute bottom-[calc(100%+10px)] left-1/2 -translate-x-1/2 translate-y-1.5 opacity-0 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-150 z-50 w-56 bg-[#f4f1eb] text-[#111111] p-2.5 border border-[#111111] shadow-[3px_3px_0_#111111] text-left"
+            >
+                <div className="flex items-center justify-between gap-1 border-b border-[#111111]/20 pb-1 mb-1">
+                    <span className="text-[10px] font-black uppercase tracking-wider text-[#111111]">
+                        {item.name}
+                    </span>
+                    {item.projects && item.projects.length > 0 && (
+                        <span className="text-[9px] font-bold bg-[#fef08a] border border-[#111111] px-1.5 py-0.5 text-[#111111]">
+                            {item.projects[0]}
+                        </span>
+                    )}
+                </div>
+                <p className="text-[11px] font-medium text-[#111111]/85 leading-snug">
+                    {item.role}
+                </p>
+                <span className="absolute -bottom-1.5 left-1/2 -translate-x-1/2 w-2.5 h-2.5 bg-[#f4f1eb] border-r border-b border-[#111111] rotate-45" />
+            </div>
         </div>
     );
 }
 
-// ─── Interactive Skill Pill Sub-component ────────────────────────────────────
-function SkillPill({
-    name,
-    role,
-    accentColor,
+// ─── Paper Top Strip (Matching Journey's PaperHead, Module Tags Removed) ──────
+function WorkbenchPaperHead({
+    category,
+    icon: Icon,
+    headerBg,
 }: {
-    name: string;
-    role: string;
-    accentColor: string;
+    category: string;
+    icon: React.ElementType;
+    headerBg: string;
 }) {
     return (
         <div
-            className="skill-pill"
-            style={{ '--pill-accent': accentColor } as React.CSSProperties}
+            className="flex items-center justify-between px-4 sm:px-5 py-2.5 border-b-[2px] border-[#111111]/20 text-[11px] sm:text-xs font-extrabold tracking-wider uppercase"
+            style={{ backgroundColor: headerBg }}
         >
-            <span className="pill-dot" aria-hidden="true" />
-            <span className="pill-name">{name}</span>
-            <span className="pill-tooltip" role="tooltip">
-                {role}
+            <span className="inline-flex items-center gap-2 text-[#111111]">
+                <Icon className="w-3.5 h-3.5 stroke-[2.5]" />
+                {category}
             </span>
         </div>
-    );
-}
-
-// ─── 01. FRONTEND CORE ───────────────────────────────────────────────────────
-export function FrontendWorkbench() {
-    const tools = [
-        { name: 'React.js',       role: 'Component Architecture & Hooks' },
-        { name: 'Next.js',        role: 'App Router, SSR & Edge Routes' },
-        { name: 'TypeScript',     role: 'Strict Type-Safe Interfaces' },
-        { name: 'JavaScript',     role: 'ES6+ Async Runtime & DOM' },
-        { name: 'Tailwind CSS',   role: 'Utility-First Design System' },
-        { name: 'Fabric.js',      role: 'Interactive HTML5 Canvas Engine' },
-        { name: 'HTML5 & CSS3',   role: 'Semantic Markup & Keyframes' },
-        { name: 'Responsive UI',  role: 'Fluid Multi-Device Layouts' },
-    ];
-
-    return (
-        <article className="toolkit-chapter frontend" aria-label="Frontend Core">
-            <div className="corner-badge">UI / UX CORE</div>
-            <div className="paper">
-                <div className="tape" aria-hidden="true" />
-                <PaperHead
-                    category="CLIENT WORKBENCH"
-                    tag="MODULE // 01"
-                    icon={Layers}
-                />
-                <div className="paper-body">
-                    <div className="chapter-intro">
-                        <span className="chapter-number">01</span>
-                        <div>
-                            <h2>
-                                Pixel precision.<br />
-                                Fluid interactions.
-                            </h2>
-                            <div className="org">
-                                FRONTEND CORE · REACTIVE INTERFACES &amp; CANVAS SYSTEMS
-                            </div>
-                        </div>
-                    </div>
-
-                    <p className="chapter-description">
-                        Architecting reactive interfaces, dynamic component trees, and tactile web experiences that feel snappy from the first paint.
-                    </p>
-
-                    <div className="code-sample">
-                        <span className="code-keyword">&lt;Canvas</span>{' '}
-                        <span className="code-prop">engine</span>=&quot;Fabric.js&quot;{' '}
-                        <span className="code-prop">fps</span>={'{60}'}{' '}
-                        <span className="code-prop">state</span>=&quot;reactive&quot;{' '}
-                        <span className="code-keyword">/&gt;</span>
-                    </div>
-
-                    <div className="sub-group-label">
-                        <Code2 size={13} /> INTERFACE &amp; RENDERING STACK
-                    </div>
-                    <div className="pill-grid">
-                        {tools.map((t) => (
-                            <SkillPill
-                                key={t.name}
-                                name={t.name}
-                                role={t.role}
-                                accentColor="#cbf0f8"
-                            />
-                        ))}
-                    </div>
-
-                    <div className="card-footer">
-                        <div className="footer-status">
-                            <span className="status-dot cyan" />
-                            <span>Primary Client Workbench</span>
-                        </div>
-                        <div className="footer-right">
-                            <span className="hand-note-small">60fps or bust!</span>
-                            <span className="item-count-badge">8 ITEMS</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div className="chapter-caption">
-                <span>Where design meets the browser.</span>
-                <ArrowUpRight aria-hidden="true" />
-            </div>
-        </article>
-    );
-}
-
-// ─── 02. AI & CLOUD ──────────────────────────────────────────────────────────
-export function AiCloudWorkbench() {
-    const genAiTools = [
-        { name: 'LangChain',             role: 'Agentic Chains & Tool Calling' },
-        { name: 'RAG & Embeddings',      role: 'Vector Retrieval & Grounding' },
-        { name: 'OpenAI API',            role: 'LLM Completions & Structured Outputs' },
-        { name: 'Claude Code & Copilot', role: 'AI-Augmented Engineering Workflows' },
-    ];
-
-    const cloudTools = [
-        { name: 'AWS Cloud',           role: 'EC2, S3, Lambda & IAM Infra' },
-        { name: 'Docker',              role: 'Deterministic Container Images' },
-        { name: 'CI/CD Pipelines',     role: 'Automated Build & Zero-Downtime Deploy' },
-        { name: 'Git / GitHub Actions', role: 'Version Control & Workflow Runners' },
-    ];
-
-    return (
-        <article className="toolkit-chapter ai" aria-label="AI and Cloud">
-            <div className="corner-badge accent">⚡ INTELLIGENT INFRA</div>
-            <div className="paper">
-                <div className="tape" aria-hidden="true" />
-                <PaperHead
-                    category="AUTONOMOUS & CLOUD"
-                    tag="MODULE // 02"
-                    icon={Sparkles}
-                />
-                <div className="paper-body">
-                    <div className="chapter-intro">
-                        <span className="chapter-number">02</span>
-                        <div>
-                            <h2>
-                                Smart agents.<br />
-                                Bulletproof shipping.
-                            </h2>
-                            <div className="org">
-                                AI &amp; CLOUD · LLM PIPELINES &amp; CONTAINER INFRASTRUCTURE
-                            </div>
-                        </div>
-                    </div>
-
-                    <p className="chapter-description">
-                        Deploying context-aware RAG workflows, autonomous agent loops, and reproducible Dockerized infrastructure in the cloud.
-                    </p>
-
-                    <div className="split-compartments">
-                        <div className="compartment">
-                            <div className="compartment-header">
-                                <Sparkles size={13} />
-                                <span>GENERATIVE AI &amp; AGENTIC STACK</span>
-                            </div>
-                            <div className="pill-grid">
-                                {genAiTools.map((t) => (
-                                    <SkillPill
-                                        key={t.name}
-                                        name={t.name}
-                                        role={t.role}
-                                        accentColor="#ffb7b2"
-                                    />
-                                ))}
-                            </div>
-                        </div>
-
-                        <div className="compartment">
-                            <div className="compartment-header">
-                                <Cloud size={13} />
-                                <span>CLOUD OPS &amp; CI/CD</span>
-                            </div>
-                            <div className="pill-grid">
-                                {cloudTools.map((t) => (
-                                    <SkillPill
-                                        key={t.name}
-                                        name={t.name}
-                                        role={t.role}
-                                        accentColor="#ffb7b2"
-                                    />
-                                ))}
-                            </div>
-                        </div>
-                    </div>
-
-                    <div className="card-footer">
-                        <div className="footer-status">
-                            <span className="status-dot green pulse" />
-                            <span>Autoscaling &amp; Containerized</span>
-                        </div>
-                        <div className="footer-right">
-                            <span className="hand-note-small">Prompts to prod.</span>
-                            <span className="item-count-badge">8 ITEMS</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div className="chapter-caption">
-                <span>Teaching code to think &amp; scale.</span>
-                <Sparkles aria-hidden="true" />
-            </div>
-        </article>
-    );
-}
-
-// ─── 03. BACKEND & INFRA ─────────────────────────────────────────────────────
-export function BackendWorkbench() {
-    const runtimeTools = [
-        { name: 'FastAPI',    role: 'High-Performance Async Python APIs' },
-        { name: 'Express.js', role: 'Modular REST & Middleware Routing' },
-        { name: 'Node.js',    role: 'Event-Driven V8 Server Runtime' },
-    ];
-
-    const queueTools = [
-        { name: 'Celery',               role: 'Distributed Task Queue Workers' },
-        { name: 'Redis',                role: 'In-Memory Pub/Sub & Caching Layer' },
-        { name: 'BullMQ',               role: 'Robust Node.js Job Scheduling' },
-        { name: 'Socket.IO',            role: 'Bi-Directional Event Rooms' },
-        { name: 'WebSockets & WebRTC',  role: 'Sub-Second Streaming & P2P Media' },
-    ];
-
-    return (
-        <article className="toolkit-chapter backend" aria-label="Backend and Infrastructure">
-            <div className="corner-badge">HIGH THROUGHPUT</div>
-            <div className="paper">
-                <div className="tape" aria-hidden="true" />
-                <PaperHead
-                    category="SYSTEMS & PIPELINES"
-                    tag="MODULE // 03"
-                    icon={Server}
-                />
-                <div className="paper-body">
-                    <div className="chapter-intro">
-                        <span className="chapter-number">03</span>
-                        <div>
-                            <h2>
-                                Async workers.<br />
-                                Zero bottlenecks.
-                            </h2>
-                            <div className="org">
-                                BACKEND &amp; INFRA · EVENT PIPELINES &amp; REALTIME SOCKETS
-                            </div>
-                        </div>
-                    </div>
-
-                    <p className="chapter-description">
-                        Constructing resilient microservices, background worker queues, and low-latency WebSocket channels that handle heavy lifting without blocking.
-                    </p>
-
-                    <div className="dual-blueprint-grid">
-                        <div className="blueprint-box">
-                            <div className="blueprint-title">
-                                <Terminal size={13} />
-                                <span>RUNTIME &amp; APIS</span>
-                            </div>
-                            <div className="pill-grid">
-                                {runtimeTools.map((t) => (
-                                    <SkillPill
-                                        key={t.name}
-                                        name={t.name}
-                                        role={t.role}
-                                        accentColor="#fef3c7"
-                                    />
-                                ))}
-                            </div>
-                        </div>
-
-                        <div className="blueprint-box">
-                            <div className="blueprint-title">
-                                <Workflow size={13} />
-                                <span>QUEUES &amp; REALTIME</span>
-                            </div>
-                            <div className="pill-grid">
-                                {queueTools.map((t) => (
-                                    <SkillPill
-                                        key={t.name}
-                                        name={t.name}
-                                        role={t.role}
-                                        accentColor="#fef3c7"
-                                    />
-                                ))}
-                            </div>
-                        </div>
-                    </div>
-
-                    <div className="code-sample">
-                        <span className="code-keyword">Client</span> &rarr;{' '}
-                        <span className="code-prop">FastAPI</span> &rarr;{' '}
-                        <span className="code-prop">Redis Broker</span> &rarr;{' '}
-                        <span className="code-keyword">Celery Worker</span> &rarr;{' '}
-                        <span className="code-prop">Socket.IO</span>
-                    </div>
-
-                    <div className="card-footer">
-                        <div className="footer-status">
-                            <span className="status-dot amber" />
-                            <span>Concurrency &amp; Async Architectures</span>
-                        </div>
-                        <div className="footer-right">
-                            <span className="hand-note-small">Sub-ms vibes.</span>
-                            <span className="item-count-badge">8 ITEMS</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div className="chapter-caption">
-                <span>The engine room under the hood.</span>
-                <Activity aria-hidden="true" />
-            </div>
-        </article>
-    );
-}
-
-// ─── 04. LANGUAGES & DATABASES ───────────────────────────────────────────────
-export function LanguagesDatabaseWorkbench() {
-    const tools = [
-        { name: 'Python',               role: 'AI Pipelines, FastAPI & Scripting' },
-        { name: 'C/C++',                role: 'Memory-Safe DSA & Competitive Speed' },
-        { name: 'PostgreSQL',           role: 'ACID Relational Storage & Indexing' },
-        { name: 'MongoDB',              role: 'Flexible Document Aggregations' },
-        { name: 'MySQL',                role: 'Structured Relational Transactions' },
-        { name: 'InfluxDB',             role: 'High-Ingestion Time-Series Metrics' },
-        { name: 'DSA & Algorithms',     role: 'Trees, Graphs & Optimal Complexity' },
-        { name: 'System Design & OOP',  role: 'Scalable Patterns & Clean Contracts' },
-    ];
-
-    return (
-        <article className="toolkit-chapter languages" aria-label="Languages and Databases">
-            <div className="corner-badge mint">CORE ENGINE</div>
-            <div className="paper">
-                <div className="tape" aria-hidden="true" />
-                <PaperHead
-                    category="FOUNDATION & DATA"
-                    tag="MODULE // 04"
-                    icon={Database}
-                />
-                <div className="paper-body">
-                    <div className="chapter-intro">
-                        <span className="chapter-number">04</span>
-                        <div>
-                            <h2>
-                                Strong types.<br />
-                                Clean schemas.
-                            </h2>
-                            <div className="org">
-                                LANGUAGES &amp; DATABASES · PERSISTENCE &amp; CORE CS
-                            </div>
-                        </div>
-                    </div>
-
-                    <p className="chapter-description">
-                        Core programming languages, multi-model persistence layers, and the algorithmic fundamentals that keep queries fast and architectures clean.
-                    </p>
-
-                    <div className="storage-paradigms">
-                        <div className="paradigm-chip">
-                            <strong>SQL</strong>
-                            <span>Relational ACID</span>
-                        </div>
-                        <div className="paradigm-chip">
-                            <strong>NoSQL</strong>
-                            <span>Document Store</span>
-                        </div>
-                        <div className="paradigm-chip">
-                            <strong>TSDB</strong>
-                            <span>Time-Series</span>
-                        </div>
-                        <div className="paradigm-chip">
-                            <strong>O(log n)</strong>
-                            <span>DSA Optimized</span>
-                        </div>
-                    </div>
-
-                    <div className="pill-grid">
-                        {tools.map((t) => (
-                            <SkillPill
-                                key={t.name}
-                                name={t.name}
-                                role={t.role}
-                                accentColor="#e2f0cb"
-                            />
-                        ))}
-                    </div>
-
-                    <div className="card-footer">
-                        <div className="footer-status">
-                            <span className="status-dot emerald" />
-                            <span>Relational · Document · Time-series</span>
-                        </div>
-                        <div className="footer-right">
-                            <span className="hand-note-small"> rock solid.</span>
-                            <span className="item-count-badge">8 ITEMS</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div className="chapter-caption">
-                <span>Fundamentals never go out of style.</span>
-                <Braces aria-hidden="true" />
-            </div>
-        </article>
     );
 }
 
 // ─── Main Toolkit Component ──────────────────────────────────────────────────
-export default function Toolkit() {
+const Skills = () => {
     const sectionRef = useRef<HTMLDivElement>(null);
-    const [filter, setFilter] = useState<ToolkitCategory>('all');
-    const show = (category: ToolkitCategory) => filter === 'all' || filter === category;
-
-    const activeCategoryObj = toolkitCategories.find((c) => c.id === filter) || toolkitCategories[0];
+    const [activeFilter, setActiveFilter] = useState<CategoryId>('all');
+    const [activeProject, setActiveProject] = useState<ProjectId>('all');
+    const [inspectedTool, setInspectedTool] = useState<SkillItem>(frontendSkills[0]);
 
     useGSAP(
         () => {
-            const cards = gsap.utils.toArray('.toolkit-chapter');
+            const cards = gsap.utils.toArray('.workbench-chapter');
             gsap.fromTo(
                 cards,
-                { y: 55, opacity: 0 },
+                { y: 50, opacity: 0 },
                 {
                     y: 0,
                     opacity: 1,
-                    duration: 0.72,
-                    stagger: 0.15,
-                    ease: 'back.out(1.4)',
+                    duration: 0.7,
+                    stagger: 0.14,
+                    ease: 'back.out(1.3)',
                     scrollTrigger: {
                         trigger: sectionRef.current,
                         start: 'top 75%',
@@ -496,18 +239,21 @@ export default function Toolkit() {
                 }
             );
         },
-        { scope: sectionRef, dependencies: [filter] }
+        { scope: sectionRef, dependencies: [activeFilter] }
     );
 
+    const showCard = (cat: CategoryId) => activeFilter === 'all' || activeFilter === cat;
+
     return (
-        <section ref={sectionRef} className="toolkit-page" id="toolkit">
-            {/* Subtle Engineering Blueprint Grid & Decorative Illustrations */}
-            <div
-                className="absolute inset-0 z-0 pointer-events-none overflow-hidden"
-                aria-hidden="true"
-            >
-                <div className="blueprint-bg-grid" />
-                <div className="absolute right-4 top-20 w-20 sm:w-28 md:w-36 aspect-square -rotate-12 opacity-90">
+        <section
+            ref={sectionRef}
+            id="skills"
+            className="toolkit-scrapbook-section relative w-full bg-[#f3865e] py-16 md:py-24 px-4 sm:px-6 md:px-10 overflow-hidden"
+        >
+            {/* Subtle Engineering Grid + Scrapbook Floating Illustrations */}
+            <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden" aria-hidden="true">
+                <div className="toolkit-bg-grid" />
+                <div className="absolute right-3 top-14 w-20 sm:w-28 md:w-36 aspect-square -rotate-12 opacity-90">
                     <Image
                         alt=""
                         src="/images/crab.png"
@@ -515,7 +261,7 @@ export default function Toolkit() {
                         className="object-contain drop-shadow-[4px_4px_0px_rgba(17,17,17,0.28)]"
                     />
                 </div>
-                <div className="absolute left-2 bottom-6 w-24 sm:w-32 md:w-40 aspect-square rotate-6 opacity-90">
+                <div className="absolute left-2 bottom-8 w-24 sm:w-32 md:w-40 aspect-square rotate-6 opacity-90">
                     <Image
                         alt=""
                         src="/images/birdBig.png"
@@ -525,821 +271,631 @@ export default function Toolkit() {
                 </div>
             </div>
 
-            <div className="toolkit-main relative z-10">
-                {/* ── Heading ── */}
-                <header className="toolkit-heading">
-                    <div className="eyebrow">THE ENGINEERING WORKBENCH / 32 TOOLS IN ROTATION</div>
-                    <h1>
-                        <LiquidHeading
-                            as="span"
-                            align="left"
-                            words={[
-                                {
-                                    text: 'MY ',
-                                    style: {
-                                        color: '#111111',
-                                        textShadow: 'none',
-                                    },
-                                },
-                                {
-                                    text: 'TOOLKIT.',
-                                    className: 'toolkit-highlight',
-                                    style: {
-                                        color: '#fffdf2',
-                                        textShadow: '4px 4px 0 #111111',
-                                    },
-                                },
-                            ]}
-                            intensity={1}
-                            speed={1}
-                        />
-                    </h1>
+            <div className="max-w-[1360px] mx-auto relative z-10">
+                {/* ── Distinct Architectural Workbench Header ── */}
+                <header className="relative mb-10 md:mb-12">
+                    {/* Black Horizontal Line */}
+                    <div className="w-full border-b-[2.5px] border-[#111111] mb-7" />
 
-                    <div className="heading-bottom">
-                        <div className="subtitle-placa">
-                            <Wrench size={15} />
-                            <span>What I use to build, ship &amp; scale the web.</span>
+                    {/* Header Grid (Left Box + Centered Title, Badge & Handwritten Para) */}
+                    <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
+                        {/* Left Wing: Tactile Stack Telemetry Spec Card */}
+                        <div className="hidden lg:flex lg:col-span-3 flex-col items-start">
+                            <div className="w-full bg-[#fffdf2] border-[2.5px] border-[#111111] p-3.5 shadow-[5px_5px_0_#111111] -rotate-2 hover:rotate-0 transition-transform">
+                                <div className="flex items-center justify-between border-b-[2px] border-[#111111] pb-1.5 mb-2.5">
+                                    <span className="text-[10px] font-black uppercase tracking-wider bg-[#bbf2f6] px-1.5 py-0.5 border border-[#111111]">
+                                        STACK METRICS
+                                    </span>
+                                    <Cpu className="w-3.5 h-3.5 text-[#111111]" />
+                                </div>
+                                <div className="grid grid-cols-2 gap-2 text-left font-mono">
+                                    <div className="bg-[#f4f1eb] border border-[#111111] p-1.5">
+                                        <span className="block text-[9px] text-[#111111]/60 font-bold">DOMAINS</span>
+                                        <span className="font-black text-base text-[#111111]">04 CORE</span>
+                                    </div>
+                                    <div className="bg-[#f4f1eb] border border-[#111111] p-1.5">
+                                        <span className="block text-[9px] text-[#111111]/60 font-bold">ARSENAL</span>
+                                        <span className="font-black text-base text-[#111111]">32 TOOLS</span>
+                                    </div>
+                                </div>
+                                <div className="mt-2.5 flex items-center justify-between text-[10px] font-bold text-[#111111]/80">
+                                    <span>DSA Foundation:</span>
+                                    <span className="font-mono font-black bg-[#fef08a] px-1.5 border border-[#111111]">
+                                        400+ Solved
+                                    </span>
+                                </div>
+                            </div>
                         </div>
-                        <p>
-                            Not just a list of buzzwords. Every framework, queue, and database here has survived late-night debugging and real production workloads.
-                        </p>
-                    </div>
 
-                    <div className="heading-note">
-                        <span className="hand-note">
-                            Hover any tool to<br />
-                            see how I use it!
-                        </span>
-                        <div className="arrow-container">
-                            <SVGPathAnimation
-                                svgPath="M10 8C70 0 80 27 43 35C10 42 15 16 45 24C79 35 83 46 79 61M67 52l12 10 9-15"
-                                customViewBox="0 0 100 80"
-                                bgColor="rgba(17, 17, 17, 0.22)"
-                                animColor="#fef08a"
-                                strokeWidth={3}
-                                lineCap="round"
-                                trigger="inView"
-                                playback="once"
-                                autoDuration={1.6}
-                                highlightGlow={true}
-                                replayOnHover={true}
-                            />
+                        {/* Center Stage: Badge, Monumental Title & Handwritten Paragraph */}
+                        <div className="lg:col-span-6 lg:col-start-4 flex flex-col items-center text-center">
+                            <div className="inline-flex items-center gap-2 bg-[#fef08a] border-[2.5px] border-[#111111] px-4 py-1 text-xs font-black uppercase tracking-widest shadow-[3.5px_3.5px_0_#111111] -rotate-1 mb-4">
+                                <Zap className="w-3.5 h-3.5 fill-current" />
+                                What I Use To Build, Ship &amp; Scale
+                            </div>
+
+                            <h1 className="m-0 leading-[0.94] tracking-tight">
+                                <LiquidHeading
+                                    as="span"
+                                    align="center"
+                                    words={[
+                                        {
+                                            text: 'MY ',
+                                            className: 'toolkit-title-accent',
+                                            style: {
+                                                color: '#fffdf2',
+                                                textShadow: '4px 4px 0 #111111, 7px 7px 0 #111111',
+                                            },
+                                        },
+                                        {
+                                            text: 'TOOLKIT.',
+                                            className: 'toolkit-title-accent',
+                                            style: {
+                                                color: '#fffdf2',
+                                                textShadow: '4px 4px 0 #111111, 7px 7px 0 #111111',
+                                            },
+                                        },
+                                    ]}
+                                    className="font-black text-4xl min-[380px]:text-5xl sm:text-7xl xl:text-[82px] uppercase select-none"
+                                    intensity={1}
+                                    speed={1}
+                                />
+                            </h1>
+
+                            <p className="toolkit-hand-note mt-3 sm:mt-4 text-xl min-[380px]:text-2xl sm:text-[28px] leading-[1.2] max-w-[580px] text-[#111111] -rotate-1">
+                                Every framework, message queue, and database below has survived late-night debugging and powers real production architectures.
+                            </p>
                         </div>
-                        <span className="chapter-label">04 WORKBENCHES · 32 TOOLS</span>
                     </div>
                 </header>
 
-                {/* ── Filter Bar ── */}
-                <nav className="filter-bar" aria-label="Filter toolkit categories">
-                    <div className="filters">
-                        {toolkitCategories.map(({ id, label, icon: Icon }) => (
-                            <button
-                                key={id}
-                                type="button"
-                                className="scrap-filter"
-                                data-active={filter === id}
-                                aria-pressed={filter === id}
-                                onClick={() => setFilter(id)}
-                            >
-                                {id === 'all' ? (
-                                    <Icon className="w-3.5 h-3.5 text-[#F18961]" />
-                                ) : (
-                                    <span className={`filter-dot ${id}`} aria-hidden="true" />
-                                )}
-                                {label}
-                            </button>
-                        ))}
-                    </div>
-                    <span className="filter-count" aria-live="polite">
-                        SHOWING {String(activeCategoryObj.count).padStart(2, '0')} / 32 SPECS
-                    </span>
-                </nav>
+                {/* ── Dual Interactive Control Bar: Category Filter + Project Stack X-Ray ── */}
+                <div className="border-y-[2.5px] border-[#111111] bg-[#fffdf2]/45 backdrop-blur-xs py-3 px-3 sm:px-4 mb-8 sm:mb-10 flex flex-col xl:flex-row items-start xl:items-center justify-between gap-3 sm:gap-4">
+                    {/* Left: Category Filter Buttons */}
+                    <nav className="flex flex-wrap items-center gap-2" aria-label="Filter toolkit categories">
+                        {filterCategories.map(({ id, label, count, dotColor, icon: Icon }) => {
+                            const isActive = activeFilter === id;
+                            return (
+                                <button
+                                    key={id}
+                                    type="button"
+                                    onClick={() =>
+                                        setActiveFilter((prev) => (id === 'all' ? 'all' : prev === id ? 'all' : id))
+                                    }
+                                    className={`inline-flex items-center gap-2 h-9 px-3.5 text-xs font-extrabold uppercase tracking-wider border-[2px] border-[#111111] transition-all cursor-pointer ${
+                                        isActive
+                                            ? 'bg-[#fef08a] text-[#111111] -translate-x-0.5 -translate-y-0.5 shadow-[3.5px_3.5px_0_#111111]'
+                                            : 'bg-[#f4f1eb] text-[#111111] hover:bg-[#fffdf2] hover:-translate-y-0.5 shadow-[2.5px_2.5px_0_#111111]'
+                                    }`}
+                                >
+                                    {id === 'all' ? (
+                                        <Icon className="w-3.5 h-3.5" />
+                                    ) : (
+                                        <span
+                                            className="w-2.5 h-2.5 border border-[#111111] inline-block"
+                                            style={{ backgroundColor: dotColor }}
+                                        />
+                                    )}
+                                    <span>{label}</span>
+                                    <span
+                                        className={`text-[10px] px-1.5 py-0.2 font-mono border border-[#111111]/30 ${
+                                            isActive ? 'bg-[#fffdf2] text-[#111111]' : 'bg-[#111111]/10 text-[#111111]'
+                                        }`}
+                                    >
+                                        {count}
+                                    </span>
+                                </button>
+                            );
+                        })}
+                    </nav>
 
-                {/* ── Scrap Board Grid ── */}
-                <div
-                    className={`scrap-board ${filter !== 'all' ? 'filtered' : ''}`}
-                    aria-label="Toolkit modules"
-                >
-                    {show('frontend') && <FrontendWorkbench />}
-                    {show('ai') && <AiCloudWorkbench />}
-                    {show('backend') && <BackendWorkbench />}
-                    {show('languages') && <LanguagesDatabaseWorkbench />}
+                    {/* Right: Project Architecture X-Ray Filter */}
+                    <div className="flex flex-wrap items-center gap-2">
+                        <span className="text-[11px] font-black uppercase tracking-wider text-[#111111] flex items-center gap-1 mr-1">
+                            <Search className="w-3.5 h-3.5" /> Project X-Ray:
+                        </span>
+                        {projectFilters.map((proj) => {
+                            const isProjActive = activeProject === proj.id;
+                            return (
+                                <button
+                                    key={proj.id}
+                                    type="button"
+                                    onClick={() =>
+                                        setActiveProject((prev) => (proj.id === 'all' ? 'all' : prev === proj.id ? 'all' : proj.id))
+                                    }
+                                    className={`px-2.5 py-1 text-[11px] font-extrabold border-[2px] border-[#111111] transition-all cursor-pointer ${
+                                        isProjActive
+                                            ? 'bg-[#fef08a] text-[#111111] shadow-[2.5px_2.5px_0_#111111] -translate-y-0.5'
+                                            : 'bg-[#f4f1eb] text-[#111111] hover:bg-[#fffdf2]'
+                                    }`}
+                                >
+                                    {proj.label}
+                                </button>
+                            );
+                        })}
+                    </div>
                 </div>
 
-                {/* ── Bottom Note ── */}
-                <div className="bottom-note">
-                    <Asterisk aria-hidden="true" />
-                    <span className="hand-note">
-                        Always picking up the right tool for the job.
+                {/* ── Scrapbook Bento Grid (Asymmetric 5+7 / 7+5 with Unique Interactive Widgets) ── */}
+                <div
+                    className={`grid grid-cols-1 ${
+                        activeFilter === 'all' ? 'lg:grid-cols-12' : 'lg:grid-cols-1 max-w-3xl mx-auto'
+                    } gap-9 lg:gap-8 items-start`}
+                >
+                    {/* =====================================================================
+                        CHAPTER 01: FRONTEND CORE (5 Cols) + Interactive UI Physics Switcher
+                       ===================================================================== */}
+                    {showCard('frontend') && (
+                        <article
+                            className={`workbench-chapter ${
+                                activeFilter === 'all' ? 'lg:col-span-5 lg:-rotate-[0.8deg]' : ''
+                            } relative transition-transform duration-300 hover:rotate-0`}
+                        >
+                            {/* Corner Stamp Badge */}
+                            <div className="absolute -top-3.5 right-4 z-30 bg-[#fef08a] text-[#111111] border-[2px] border-[#111111] px-2.5 py-0.5 text-[10px] font-black uppercase tracking-wider shadow-[3px_3px_0_#111111] rotate-3 select-none">
+                                UI / UX &amp; CANVAS
+                            </div>
+
+                            <div className="bg-[#fffdf2] border-[2px] border-[#111111] shadow-[6px_6px_0_#111111] hover:shadow-[9px_9px_0_#111111] transition-all relative">
+                                {/* Washi Tape */}
+                                <div className="toolkit-tape" aria-hidden="true" />
+
+                                <WorkbenchPaperHead
+                                    category="CLIENT WORKBENCH"
+                                    icon={Layers}
+                                    headerBg="#bbf2f6"
+                                />
+
+                                <div className="p-5 sm:p-6">
+                                    {/* Chapter Intro (Matching Journey's Number + Headline Typography) */}
+                                    <div className="flex items-start gap-3 sm:gap-4 mb-3">
+                                        <span
+                                            className="font-extrabold text-[44px] sm:text-[56px] md:text-[68px] leading-none select-none shrink-0"
+                                            style={{ color: '#d5d3ca' }}
+                                        >
+                                            01
+                                        </span>
+                                        <div>
+                                            <h2 className="font-black text-lg sm:text-xl md:text-2xl leading-tight text-[#111111] m-0">
+                                                Pixel precision.<br />Fluid interactions.
+                                            </h2>
+                                            <div className="text-[10px] sm:text-[11px] font-extrabold tracking-wider uppercase text-[#111111]/65 mt-1">
+                                                REACTIVE INTERFACES · SSR &amp; HTML5 CANVAS
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <p className="toolkit-card-description mb-6">
+                                        Architecting snappy component trees, zero-layout-shift pages, and real-time collaborative whiteboards.
+                                    </p>
+
+                                    {/* Skill Pills (Image 4 Style with Real Icons) */}
+                                    <div className="flex flex-wrap gap-2 sm:gap-2.5 mb-6">
+                                        {frontendSkills.map((skill, idx) => (
+                                            <ToolPill
+                                                key={skill.name}
+                                                item={skill}
+                                                index={idx}
+                                                activeProject={activeProject}
+                                                onHover={setInspectedTool}
+                                            />
+                                        ))}
+                                    </div>
+
+                                    {/* Metric Footer (Like Journey's CGPA Footer) */}
+                                    <div className="pt-3.5 border-t-[2px] border-dashed border-[#111111]/25 flex flex-wrap items-center justify-between gap-2">
+                                        <div>
+                                            <span className="block text-[10px] font-extrabold uppercase tracking-wider text-[#111111]/60">
+                                                RENDER TARGET
+                                            </span>
+                                            <span className="font-black text-xl sm:text-2xl text-[#111111]">
+                                                60 <small className="text-xs font-bold text-[#111111]/65">FPS / SSR</small>
+                                            </span>
+                                        </div>
+                                        <div className="flex items-center gap-2">
+                                            <span className="toolkit-hand-note text-lg sm:text-xl text-[#111111] -rotate-3">
+                                                Snappy by default!
+                                            </span>
+                                            <span className="bg-[#bbf2f6] text-[#111111] border-[2px] border-[#111111] px-2.5 py-1 text-[10px] font-black uppercase shadow-[2px_2px_0_#111111]">
+                                                08 TOOLS
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Handwritten Caption Under Card */}
+                            <div className="mt-2.5 px-1 flex items-center justify-between text-[#111111]">
+                                <span className="toolkit-hand-note text-2xl -rotate-1">
+                                    Where design meets the browser.
+                                </span>
+                                <ArrowDownRight className="w-5 h-5 stroke-[2.5]" />
+                            </div>
+                        </article>
+                    )}
+
+                    {/* =====================================================================
+                        CHAPTER 02: AI & CLOUD (7 Cols) + Interactive RAG & Deploy Stepper
+                       ===================================================================== */}
+                    {showCard('aicloud') && (
+                        <article
+                            className={`workbench-chapter ${
+                                activeFilter === 'all' ? 'lg:col-span-7 lg:mt-6 lg:rotate-[0.7deg]' : ''
+                            } relative transition-transform duration-300 hover:rotate-0`}
+                        >
+                            {/* Corner Stamp Badge (Off-White + Black Font) */}
+                            <div className="absolute -top-3.5 right-4 z-30 bg-[#f4f1eb] text-[#111111] border-[2px] border-[#111111] px-3 py-0.5 text-[10px] font-black uppercase tracking-wider shadow-[3px_3px_0_#111111] -rotate-2 select-none">
+                                ✨ AGENTIC AI &amp; CLOUD OPS
+                            </div>
+
+                            <div className="bg-[#fffdf2] border-[2px] border-[#111111] shadow-[6px_6px_0_#111111] hover:shadow-[9px_9px_0_#111111] transition-all relative">
+                                {/* Washi Tape */}
+                                <div className="toolkit-tape" aria-hidden="true" />
+
+                                <WorkbenchPaperHead
+                                    category="AUTONOMOUS & CLOUD INFRA"
+                                    icon={Sparkles}
+                                    headerBg="#fecdd3"
+                                />
+
+                                <div className="p-5 sm:p-6">
+                                    {/* Chapter Intro */}
+                                    <div className="flex items-start gap-3 sm:gap-4 mb-3">
+                                        <span
+                                            className="font-extrabold text-[44px] sm:text-[56px] md:text-[68px] leading-none select-none shrink-0"
+                                            style={{ color: '#d5d3ca' }}
+                                        >
+                                            02
+                                        </span>
+                                        <div>
+                                            <h2 className="font-black text-lg sm:text-xl md:text-2xl leading-tight text-[#111111] m-0">
+                                                Smart agents.<br />Bulletproof shipping.
+                                            </h2>
+                                            <div className="text-[10px] sm:text-[11px] font-extrabold tracking-wider uppercase text-[#111111]/65 mt-1">
+                                                LLM ORCHESTRATION · VECTOR RAG &amp; CONTAINERS
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <p className="toolkit-card-description mb-6">
+                                        Building context-grounded AI agents that reason over real codebases, backed by reproducible Docker &amp; AWS pipelines.
+                                    </p>
+
+                                    {/* 2 Clustered Sub-Groups with Image 4 Style Pills */}
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                                        <div className="bg-[#fff5f6]/70 p-3.5 border border-[#111111]/20">
+                                            <span className="text-[11px] font-black uppercase tracking-wider text-[#111111] flex items-center gap-1.5 mb-3">
+                                                <Cpu className="w-3.5 h-3.5" /> GenAI &amp; Agentic Stack
+                                            </span>
+                                            <div className="flex flex-wrap gap-2.5">
+                                                {aiSkills.map((skill, idx) => (
+                                                    <ToolPill
+                                                        key={skill.name}
+                                                        item={skill}
+                                                        index={idx}
+                                                        activeProject={activeProject}
+                                                        onHover={setInspectedTool}
+                                                    />
+                                                ))}
+                                            </div>
+                                        </div>
+
+                                        <div className="bg-[#fff5f6]/70 p-3.5 border border-[#111111]/20">
+                                            <span className="text-[11px] font-black uppercase tracking-wider text-[#111111] flex items-center gap-1.5 mb-3">
+                                                <Cloud className="w-3.5 h-3.5" /> Cloud Ops &amp; CI/CD
+                                            </span>
+                                            <div className="flex flex-wrap gap-2.5">
+                                                {cloudSkills.map((skill, idx) => (
+                                                    <ToolPill
+                                                        key={skill.name}
+                                                        item={skill}
+                                                        index={idx + 4}
+                                                        activeProject={activeProject}
+                                                        onHover={setInspectedTool}
+                                                    />
+                                                ))}
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {/* Footer */}
+                                    <div className="pt-3.5 border-t-[2px] border-dashed border-[#111111]/25 flex flex-wrap items-center justify-between gap-2">
+                                        <div className="flex items-center gap-2 text-xs font-extrabold text-[#111111]">
+                                            <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 border border-[#111111] animate-pulse" />
+                                            <span>AWS Certified &amp; IBM RAG Verified</span>
+                                        </div>
+                                        <div className="flex items-center gap-3">
+                                            <span className="toolkit-hand-note text-xl text-[#111111] rotate-2">
+                                                Grounded context &gt; hype.
+                                            </span>
+                                            <span className="bg-[#fecdd3] text-[#111111] border-[2px] border-[#111111] px-2.5 py-1 text-[10px] font-black uppercase shadow-[2px_2px_0_#111111]">
+                                                08 TOOLS
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Handwritten Caption */}
+                            <div className="mt-2.5 px-1 flex items-center justify-between text-[#111111]">
+                                <span className="toolkit-hand-note text-2xl rotate-1">
+                                    Prompts in, production out.
+                                </span>
+                                <Sparkles className="w-5 h-5 stroke-[2.2]" />
+                            </div>
+                        </article>
+                    )}
+
+                    {/* =====================================================================
+                        CHAPTER 03: BACKEND & INFRA (7 Cols) + Live Cluster Ping Simulator
+                       ===================================================================== */}
+                    {showCard('backend') && (
+                        <article
+                            className={`workbench-chapter ${
+                                activeFilter === 'all' ? 'lg:col-span-7 lg:-mt-2 lg:rotate-[0.6deg]' : ''
+                            } relative transition-transform duration-300 hover:rotate-0`}
+                        >
+                            {/* Corner Stamp Badge */}
+                            <div className="absolute -top-3.5 right-4 z-30 bg-[#bbf2f6] text-[#111111] border-[2px] border-[#111111] px-3 py-0.5 text-[10px] font-black uppercase tracking-wider shadow-[3px_3px_0_#111111] rotate-2 select-none">
+                                ⚡ HIGH THROUGHPUT
+                            </div>
+
+                            <div className="bg-[#fffdf2] border-[2px] border-[#111111] shadow-[6px_6px_0_#111111] hover:shadow-[9px_9px_0_#111111] transition-all relative">
+                                {/* Washi Tape */}
+                                <div className="toolkit-tape" aria-hidden="true" />
+
+                                <WorkbenchPaperHead
+                                    category="DISTRIBUTED & ASYNC BACKEND"
+                                    icon={Server}
+                                    headerBg="#fef08a"
+                                />
+
+                                <div className="p-5 sm:p-6">
+                                    {/* Chapter Intro */}
+                                    <div className="flex items-start gap-3 sm:gap-4 mb-3">
+                                        <span
+                                            className="font-extrabold text-[44px] sm:text-[56px] md:text-[68px] leading-none select-none shrink-0"
+                                            style={{ color: '#d5d3ca' }}
+                                        >
+                                            03
+                                        </span>
+                                        <div>
+                                            <h2 className="font-black text-lg sm:text-xl md:text-2xl leading-tight text-[#111111] m-0">
+                                                Low latency.<br />High throughput.
+                                            </h2>
+                                            <div className="text-[10px] sm:text-[11px] font-extrabold tracking-wider uppercase text-[#111111]/65 mt-1">
+                                                ASYNC APIS · MESSAGE QUEUES &amp; WEBSOCKETS
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <p className="toolkit-card-description mb-6">
+                                        Designing non-blocking APIs, background job queues, and bi-directional socket streams that stay resilient under heavy load.
+                                    </p>
+
+                                    {/* 2 Sub-Columns with Image 4 Style Pills */}
+                                    <div className="grid grid-cols-1 md:grid-cols-12 gap-4 mb-6">
+                                        <div className="md:col-span-5 bg-[#fefce8] p-3 sm:p-3.5 border border-[#111111]/20">
+                                            <span className="text-[11px] font-black uppercase tracking-wider text-[#111111] block mb-3">
+                                                Runtime &amp; APIs
+                                            </span>
+                                            <div className="flex flex-wrap gap-2 sm:gap-2.5">
+                                                {backendRuntimeSkills.map((skill, idx) => (
+                                                    <ToolPill
+                                                        key={skill.name}
+                                                        item={skill}
+                                                        index={idx}
+                                                        activeProject={activeProject}
+                                                        onHover={setInspectedTool}
+                                                    />
+                                                ))}
+                                            </div>
+                                        </div>
+
+                                        <div className="md:col-span-7 bg-[#fefce8] p-3 sm:p-3.5 border border-[#111111]/20">
+                                            <span className="text-[11px] font-black uppercase tracking-wider text-[#111111] block mb-3">
+                                                Queues, Caching &amp; Realtime
+                                            </span>
+                                            <div className="flex flex-wrap gap-2 sm:gap-2.5">
+                                                {backendQueueSkills.map((skill, idx) => (
+                                                    <ToolPill
+                                                        key={skill.name}
+                                                        item={skill}
+                                                        index={idx + 3}
+                                                        activeProject={activeProject}
+                                                        onHover={setInspectedTool}
+                                                    />
+                                                ))}
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {/* Footer */}
+                                    <div className="pt-3.5 border-t-[2px] border-dashed border-[#111111]/25 flex flex-wrap items-center justify-between gap-2">
+                                        <div className="text-xs font-extrabold text-[#111111]">
+                                            Concurrency, Pub/Sub &amp; Event-Driven Pipelines
+                                        </div>
+                                        <div className="flex items-center gap-3">
+                                            <span className="toolkit-hand-note text-lg sm:text-xl text-[#111111] -rotate-2">
+                                                Zero blocking calls!
+                                            </span>
+                                            <span className="bg-[#fef08a] text-[#111111] border-[2px] border-[#111111] px-2.5 py-1 text-[10px] font-black uppercase shadow-[2px_2px_0_#111111]">
+                                                08 TOOLS
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Handwritten Caption */}
+                            <div className="mt-2.5 px-1 flex items-center justify-between text-[#111111]">
+                                <span className="toolkit-hand-note text-2xl -rotate-1">
+                                    Built for the traffic spike.
+                                </span>
+                                <Zap className="w-5 h-5 stroke-[2.2]" />
+                            </div>
+                        </article>
+                    )}
+
+                    {/* =====================================================================
+                        CHAPTER 04: LANGUAGES & DATABASES (5 Cols) + Storage Query Switcher
+                       ===================================================================== */}
+                    {showCard('languages') && (
+                        <article
+                            className={`workbench-chapter ${
+                                activeFilter === 'all' ? 'lg:col-span-5 lg:mt-4 lg:-rotate-[0.9deg]' : ''
+                            } relative transition-transform duration-300 hover:rotate-0`}
+                        >
+                            {/* Corner Stamp Badge */}
+                            <div className="absolute -top-3.5 right-4 z-30 bg-[#dcfce7] text-[#111111] border-[2px] border-[#111111] px-3 py-0.5 text-[10px] font-black uppercase tracking-wider shadow-[3px_3px_0_#111111] rotate-3 select-none">
+                                CORE ENGINE &amp; DATA
+                            </div>
+
+                            <div className="bg-[#fffdf2] border-[2px] border-[#111111] shadow-[6px_6px_0_#111111] hover:shadow-[9px_9px_0_#111111] transition-all relative">
+                                {/* Washi Tape */}
+                                <div className="toolkit-tape" aria-hidden="true" />
+
+                                <WorkbenchPaperHead
+                                    category="LANGUAGES & PERSISTENCE"
+                                    icon={Database}
+                                    headerBg="#dcfce7"
+                                />
+
+                                <div className="p-5 sm:p-6">
+                                    {/* Chapter Intro */}
+                                    <div className="flex items-start gap-3 sm:gap-4 mb-3">
+                                        <span
+                                            className="font-extrabold text-[44px] sm:text-[56px] md:text-[68px] leading-none select-none shrink-0"
+                                            style={{ color: '#d5d3ca' }}
+                                        >
+                                            04
+                                        </span>
+                                        <div>
+                                            <h2 className="font-black text-lg sm:text-xl md:text-2xl leading-tight text-[#111111] m-0">
+                                                Strong types.<br />Zero bottlenecks.
+                                            </h2>
+                                            <div className="text-[10px] sm:text-[11px] font-extrabold tracking-wider uppercase text-[#111111]/65 mt-1">
+                                                POLYGLOT SYSTEMS · SQL, NOSQL &amp; TIME-SERIES
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <p className="toolkit-card-description mb-6">
+                                        Choosing the right data model for the job—backed by 400+ algorithmic problems solved and strict complexity discipline.
+                                    </p>
+
+                                    {/* Skill Pills (Image 4 Style with Real Icons) */}
+                                    <div className="flex flex-wrap gap-2 sm:gap-2.5 mb-6">
+                                        {languageSkills.map((skill, idx) => (
+                                            <ToolPill
+                                                key={skill.name}
+                                                item={skill}
+                                                index={idx}
+                                                activeProject={activeProject}
+                                                onHover={setInspectedTool}
+                                            />
+                                        ))}
+                                    </div>
+
+                                    {/* Sticky Note + Metric Footer (Like Journey's Achievement Streak Card) */}
+                                    <div className="pt-3.5 border-t-[2px] border-dashed border-[#111111]/25 flex flex-wrap items-center justify-between gap-2">
+                                        <div className="bg-[#fef08a] border-[2px] border-[#111111] px-3 py-1.5 shadow-[3px_3px_0_#111111] -rotate-2">
+                                            <span className="block text-[9px] font-extrabold uppercase tracking-wider text-[#111111]/70">
+                                                ALGORITHMIC GRIND
+                                            </span>
+                                            <span className="font-black text-base text-[#111111]">
+                                                <CountUp value={436} duration={1.8} />+ <small className="text-[10px] font-bold">SOLVED</small>
+                                            </span>
+                                        </div>
+
+                                        <div className="flex items-center gap-2">
+                                            <span className="toolkit-hand-note text-lg sm:text-xl text-[#111111] rotate-2">
+                                                O(1) mindset!
+                                            </span>
+                                            <span className="bg-[#dcfce7] border-[2px] border-[#111111] px-2.5 py-1 text-[10px] font-black uppercase shadow-[2px_2px_0_#111111]">
+                                                08 TOOLS
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Handwritten Caption */}
+                            <div className="mt-2.5 px-1 flex items-center justify-between text-[#111111]">
+                                <span className="toolkit-hand-note text-2xl rotate-1">
+                                    The bedrock underneath it all.
+                                </span>
+                                <Braces className="w-5 h-5 stroke-[2.2]" />
+                            </div>
+                        </article>
+                    )}
+                </div>
+
+                {/* ── Bottom Note (Matching Journey's Closing Note) ── */}
+                <div className="mt-12 flex items-center justify-center gap-3 select-none">
+                    <Asterisk className="w-6 h-6 text-[#111111] stroke-[2.5]" />
+                    <span className="toolkit-hand-note text-2xl sm:text-3xl bg-[#fffdf2] border-[2px] border-[#111111] px-5 py-1.5 shadow-[4px_4px_0_#111111] -rotate-2 text-[#111111]">
+                        Always learning the next tool when the problem demands it.
                     </span>
-                    <svg viewBox="0 0 40 40" fill="none" aria-hidden="true">
-                        <path
-                            d="m5 31 27-25 3 5L10 36l-5-5Zm0 0-2 7 7-2"
-                            stroke="currentColor"
-                            strokeWidth="2.2"
-                            strokeLinejoin="round"
-                        />
-                    </svg>
                 </div>
             </div>
 
-            {/* ── Scoped CSS ── */}
+            {/* Scoped Typography & Scrapbook Styles */}
             <style>{`
-                @import url('https://fonts.googleapis.com/css2?family=Caveat:wght@500;600;700&family=Space+Grotesk:wght@400;500;600;700;800&display=swap');
+                @import url('https://fonts.googleapis.com/css2?family=Caveat:wght@500;600;700&family=Space+Grotesk:wght@500;600;700;800&display=swap');
 
-                .toolkit-page {
-                    --font-sans: var(--font-space-grotesk, 'Space Grotesk', sans-serif);
-                    --font-hand: var(--font-caveat, 'Caveat', cursive);
-                    --background: #F18961;
-                    --foreground: #111111;
-                    --card: #fffdf2;
-                    --primary: #F18961;
-                    --accent: #fef08a;
-                    --border: #111111;
-                    --muted-foreground: rgba(17, 17, 17, 0.68);
-                    --frontend: #cbf0f8;
-                    --ai: #ffb7b2;
-                    --backend: #fef3c7;
-                    --languages: #e2f0cb;
-                    --tape: rgba(255, 255, 255, 0.72);
-                    --shadow-paper: 6px 7px 0 var(--foreground);
-                    --shadow-lift: 10px 12px 0 var(--foreground);
-
-                    min-height: 100vh;
-                    background-color: var(--background);
-                    color: var(--foreground);
-                    position: relative;
-                    overflow: hidden;
-                    font-family: var(--font-sans);
+                .toolkit-scrapbook-section {
+                    font-family: var(--font-space-grotesk, 'Space Grotesk', sans-serif);
                 }
 
-                .blueprint-bg-grid {
+                .toolkit-card-description {
+                    font-family: var(--font-caveat, 'Caveat', cursive);
+                    font-size: 23px;
+                    line-height: 1.35;
+                    font-weight: 600;
+                    color: #111111;
+                }
+
+                @media (max-width: 640px) {
+                    .toolkit-card-description {
+                        font-size: 20px;
+                    }
+                }
+
+                .toolkit-bg-grid {
                     position: absolute;
                     inset: 0;
-                    background-image: 
-                        linear-gradient(to right, rgba(17, 17, 17, 0.06) 1px, transparent 1px),
-                        linear-gradient(to bottom, rgba(17, 17, 17, 0.06) 1px, transparent 1px);
+                    background-image:
+                        linear-gradient(to right, rgba(17, 17, 17, 0.065) 1px, transparent 1px),
+                        linear-gradient(to bottom, rgba(17, 17, 17, 0.065) 1px, transparent 1px);
                     background-size: 36px 36px;
                 }
 
-                .toolkit-main {
-                    max-width: 1240px;
-                    margin: auto;
-                    padding: 64px 40px 0;
-                }
-
-                /* ── Header Styling ── */
-                .toolkit-heading {
-                    position: relative;
-                    margin-bottom: 44px;
-                }
-
-                .eyebrow {
-                    font-size: 13px;
-                    font-weight: 800;
-                    display: inline-flex;
-                    align-items: center;
-                    gap: 10px;
-                    margin-bottom: 16px;
-                    letter-spacing: 0.07em;
-                    background: var(--card);
-                    padding: 5px 12px;
-                    border: 1.5px solid var(--border);
-                    box-shadow: 2.5px 2.5px 0 var(--foreground);
-                }
-
-                .eyebrow::before {
-                    content: '';
-                    width: 8px;
-                    height: 8px;
-                    background: var(--accent);
-                    border: 1.5px solid var(--border);
-                }
-
-                .toolkit-heading h1 {
-                    margin: 0;
-                    font-size: clamp(54px, 8vw, 94px);
-                    line-height: 0.98;
-                    font-weight: 800;
-                    letter-spacing: -0.02em;
-                }
-
-                .heading-bottom {
-                    margin-top: 24px;
-                    display: flex;
-                    flex-wrap: wrap;
-                    align-items: center;
-                    gap: 24px 36px;
-                }
-
-                .subtitle-placa {
-                    display: inline-flex;
-                    align-items: center;
-                    gap: 9px;
-                    background: var(--accent);
-                    border: 2px solid var(--border);
-                    padding: 9px 18px;
-                    font-weight: 800;
-                    font-size: 15px;
-                    box-shadow: 4px 4px 0 var(--foreground);
-                    transform: rotate(-1.5deg);
-                }
-
-                .heading-bottom p {
-                    font-size: 15px;
-                    line-height: 1.75;
-                    margin: 0;
-                    max-width: 510px;
-                    color: #111111;
-                    font-weight: 600;
-                }
-
-                .hand-note {
-                    font-family: var(--font-hand);
-                    font-size: 29px;
-                    line-height: 1.12;
+                .toolkit-hand-note {
+                    font-family: var(--font-caveat, 'Caveat', cursive);
                     font-weight: 700;
-                    transform: rotate(-6deg);
-                    color: var(--foreground);
-                }
-
-                .heading-note {
-                    position: absolute;
-                    right: 20px;
-                    top: 8px;
-                    display: flex;
-                    flex-direction: column;
-                    align-items: center;
-                    user-select: none;
-                }
-
-                .heading-note .hand-note {
-                    font-size: 31px;
-                    text-align: center;
-                }
-
-                .heading-note .arrow-container {
-                    width: 105px;
-                    height: 70px;
-                    transform: rotate(12deg);
-                    margin-left: 32px;
-                }
-
-                .chapter-label {
-                    display: inline-block;
-                    font-size: 12px;
-                    font-weight: 800;
-                    letter-spacing: 0.05em;
-                    padding: 7px 12px;
-                    border: 1.5px solid var(--border);
-                    background: var(--card);
-                    transform: rotate(2.5deg);
-                    margin-top: 4px;
-                    box-shadow: 3px 3px 0 var(--foreground);
-                }
-
-                /* ── Filter Bar ── */
-                .filter-bar {
-                    display: flex;
-                    justify-content: space-between;
-                    align-items: center;
-                    border-top: 2px solid var(--border);
-                    border-bottom: 2px solid var(--border);
-                    background: rgba(255, 253, 242, 0.35);
-                    backdrop-filter: blur(4px);
-                    padding: 14px 18px;
-                    margin-bottom: 52px;
-                    gap: 20px;
-                }
-
-                .filters {
-                    display: flex;
-                    gap: 10px;
-                    flex-wrap: wrap;
-                }
-
-                .scrap-filter {
-                    border-radius: 0;
-                    font-size: 12.5px;
-                    height: 36px;
-                    padding: 0 15px;
-                    border: 1.5px solid var(--border);
-                    background: var(--card);
-                    font-weight: 800;
-                    box-shadow: 2.5px 2.5px 0 var(--foreground);
-                    cursor: pointer;
-                    display: inline-flex;
-                    align-items: center;
-                    gap: 8px;
-                    text-transform: uppercase;
-                    transition: all 0.15s ease;
-                    color: var(--foreground);
-                }
-
-                .scrap-filter:hover {
-                    transform: translate(-1.5px, -1.5px);
-                    box-shadow: 4px 4px 0 var(--foreground);
-                    background: var(--accent);
-                }
-
-                .scrap-filter[data-active=true] {
-                    background: var(--foreground);
-                    color: var(--card);
-                    border-color: var(--border);
-                    box-shadow: 3.5px 3.5px 0 var(--accent);
-                    transform: translate(-1px, -1px);
-                }
-
-                .filter-dot {
-                    width: 9px;
-                    height: 9px;
-                    border: 1.5px solid var(--border);
+                    line-height: 1.1;
                     display: inline-block;
                 }
 
-                .filter-dot.frontend { background: var(--frontend); }
-                .filter-dot.ai { background: var(--ai); }
-                .filter-dot.backend { background: var(--backend); }
-                .filter-dot.languages { background: var(--languages); }
-
-                .filter-count {
-                    font-size: 12px;
-                    white-space: nowrap;
-                    color: var(--foreground);
-                    font-weight: 800;
-                    letter-spacing: 0.06em;
-                    background: var(--accent);
-                    padding: 5px 10px;
-                    border: 1.5px solid var(--border);
-                    box-shadow: 2px 2px 0 var(--foreground);
-                }
-
-                /* ── Scrap Board Grid ── */
-                .scrap-board {
-                    display: grid;
-                    grid-template-columns: 1fr 1.05fr;
-                    gap: 54px 64px;
-                    align-items: start;
-                    padding: 8px 6px 50px;
-                }
-
-                .scrap-board.filtered {
-                    max-width: 740px;
-                    grid-template-columns: 1fr;
-                    margin: 0 auto;
-                    min-height: 480px;
-                }
-
-                .toolkit-chapter {
-                    position: relative;
-                    min-width: 0;
-                }
-
-                .toolkit-chapter.frontend { transform: rotate(-1.2deg); }
-                .toolkit-chapter.ai { margin-top: 38px; transform: rotate(1.1deg); }
-                .toolkit-chapter.backend { margin-top: -10px; transform: rotate(0.9deg); }
-                .toolkit-chapter.languages { margin-top: 32px; transform: rotate(-1.1deg); }
-
-                .scrap-board.filtered .toolkit-chapter {
-                    margin-top: 16px;
-                    transform: none;
-                }
-
-                /* ── Corner Sticker Tab ── */
-                .corner-badge {
+                .toolkit-tape {
                     position: absolute;
                     top: -13px;
-                    right: 22px;
-                    z-index: 6;
-                    background: var(--card);
-                    border: 2px solid var(--border);
-                    padding: 3px 10px;
-                    font-size: 10.5px;
-                    font-weight: 900;
-                    letter-spacing: 0.06em;
-                    box-shadow: 2.5px 2.5px 0 var(--foreground);
-                    transform: rotate(3.5deg);
-                    text-transform: uppercase;
-                }
-
-                .corner-badge.accent {
-                    background: var(--accent);
-                    transform: rotate(2.5deg);
-                }
-
-                .corner-badge.mint {
-                    background: #6ee7b7;
-                    transform: rotate(3deg);
-                }
-
-                /* ── Paper Card ── */
-                .paper {
-                    border: 2.5px solid var(--border);
-                    background: var(--card);
-                    box-shadow: var(--shadow-paper);
-                    position: relative;
-                    transition: transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.22s ease;
-                }
-
-                .toolkit-chapter:hover .paper {
-                    transform: translateY(-4px);
-                    box-shadow: var(--shadow-lift);
-                }
-
-                .tape {
-                    width: 118px;
-                    height: 28px;
-                    background: var(--tape);
-                    position: absolute;
-                    top: -14px;
-                    left: 36%;
-                    transform: rotate(-2.5deg);
-                    z-index: 4;
-                    border-left: 2px dashed rgba(0, 0, 0, 0.25);
-                    border-right: 2px dashed rgba(0, 0, 0, 0.25);
-                    backdrop-filter: blur(2px);
-                }
-
-                .paper-head {
-                    padding: 20px 26px 16px;
-                    display: flex;
-                    align-items: center;
-                    justify-content: space-between;
-                    gap: 12px;
-                    border-bottom: 2px solid var(--border);
-                    font-size: 12px;
-                    font-weight: 800;
-                    letter-spacing: 0.06em;
-                }
-
-                .category-tag {
-                    display: flex;
-                    align-items: center;
-                    gap: 8px;
-                }
-
-                .category-tag svg {
-                    width: 16px;
-                    height: 16px;
-                }
-
-                .head-code {
-                    font-family: monospace;
-                    font-size: 11.5px;
-                    background: rgba(255, 255, 255, 0.65);
-                    padding: 2px 7px;
-                    border: 1px solid var(--border);
-                }
-
-                .frontend .paper-head { background: var(--frontend); }
-                .ai .paper-head { background: var(--ai); }
-                .backend .paper-head { background: var(--backend); }
-                .languages .paper-head { background: var(--languages); }
-
-                .paper-body {
-                    padding: 26px;
-                }
-
-                .chapter-intro {
-                    display: flex;
-                    align-items: flex-start;
-                    gap: 18px;
-                }
-
-                .chapter-number {
-                    font-size: 64px;
-                    line-height: 0.95;
-                    font-weight: 800;
-                    opacity: 0.16;
-                    user-select: none;
-                }
-
-                .chapter-intro h2 {
-                    font-size: 26px;
-                    line-height: 1.18;
-                    margin: 0 0 8px;
-                    font-weight: 800;
-                }
-
-                .org {
-                    font-size: 11.5px;
-                    line-height: 1.5;
-                    font-weight: 800;
-                    color: var(--muted-foreground);
-                    letter-spacing: 0.05em;
-                }
-
-                .chapter-description {
-                    font-family: var(--font-hand);
-                    font-size: 22.5px;
-                    line-height: 1.32;
-                    font-weight: 600;
-                    color: var(--foreground);
-                    margin: 16px 0 18px;
-                }
-
-                /* ── Code / Pipeline Strip ── */
-                .code-sample {
-                    background: var(--foreground);
-                    color: #e2f0cb;
-                    padding: 12px 18px;
-                    font-family: monospace;
-                    font-size: 12.5px;
-                    line-height: 1.6;
-                    margin: 16px -26px;
-                    border-top: 1.5px solid var(--border);
-                    border-bottom: 1.5px solid var(--border);
-                    overflow-x: auto;
-                    white-space: nowrap;
-                }
-
-                .code-keyword { color: #fef08a; font-weight: 700; }
-                .code-prop { color: #cbf0f8; }
-
-                /* ── Sub-group & Compartments ── */
-                .sub-group-label {
-                    display: flex;
-                    align-items: center;
-                    gap: 6px;
-                    font-size: 11px;
-                    font-weight: 800;
-                    letter-spacing: 0.06em;
-                    color: var(--muted-foreground);
-                    margin-bottom: 10px;
-                    text-transform: uppercase;
-                }
-
-                .split-compartments {
-                    display: flex;
-                    flex-direction: column;
-                    gap: 16px;
-                    margin-top: 6px;
-                }
-
-                .compartment {
-                    border: 1.5px dashed rgba(17, 17, 17, 0.3);
-                    background: rgba(255, 183, 178, 0.12);
-                    padding: 13px 14px;
-                }
-
-                .compartment-header {
-                    display: flex;
-                    align-items: center;
-                    gap: 6px;
-                    font-size: 11px;
-                    font-weight: 800;
-                    letter-spacing: 0.06em;
-                    margin-bottom: 10px;
-                    color: var(--foreground);
-                }
-
-                .dual-blueprint-grid {
-                    display: grid;
-                    grid-template-columns: 1fr;
-                    gap: 14px;
-                    margin: 12px 0;
-                }
-
-                .blueprint-box {
-                    border: 1.5px solid var(--border);
-                    background: rgba(254, 243, 199, 0.25);
-                    padding: 13px 14px;
-                    box-shadow: 2.5px 2.5px 0 rgba(17, 17, 17, 0.12);
-                }
-
-                .blueprint-title {
-                    display: flex;
-                    align-items: center;
-                    gap: 6px;
-                    font-size: 11px;
-                    font-weight: 800;
-                    letter-spacing: 0.06em;
-                    margin-bottom: 10px;
-                    padding-bottom: 6px;
-                    border-bottom: 1px dashed rgba(17, 17, 17, 0.25);
-                }
-
-                /* ── Storage Paradigm Strip (Card 04) ── */
-                .storage-paradigms {
-                    display: grid;
-                    grid-template-columns: repeat(4, 1fr);
-                    gap: 8px;
-                    margin-bottom: 16px;
-                    padding: 10px;
-                    background: rgba(226, 240, 203, 0.35);
-                    border: 1.5px dashed rgba(17, 17, 17, 0.3);
-                }
-
-                .paradigm-chip {
-                    display: flex;
-                    flex-direction: column;
-                    align-items: center;
-                    text-align: center;
-                    padding: 4px;
-                }
-
-                .paradigm-chip strong {
-                    font-size: 13px;
-                    font-weight: 800;
-                }
-
-                .paradigm-chip span {
-                    font-size: 10px;
-                    color: var(--muted-foreground);
-                    font-weight: 600;
-                }
-
-                /* ── Interactive Skill Pills ── */
-                .pill-grid {
-                    display: flex;
-                    flex-wrap: wrap;
-                    gap: 9px;
-                }
-
-                .skill-pill {
-                    position: relative;
-                    display: inline-flex;
-                    align-items: center;
-                    gap: 7px;
-                    padding: 7px 13px;
-                    background: #ffffff;
-                    border: 2px solid var(--border);
-                    box-shadow: 2.5px 2.5px 0 var(--border);
-                    font-size: 12.5px;
-                    font-weight: 800;
-                    cursor: default;
-                    transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1),
-                                box-shadow 0.2s ease,
-                                background-color 0.15s ease;
-                }
-
-                .skill-pill:hover {
-                    transform: translate(-2px, -3px) rotate(-1deg);
-                    box-shadow: 4.5px 4.5px 0 var(--border);
-                    background: var(--pill-accent, var(--accent));
-                    z-index: 30;
-                }
-
-                .pill-dot {
-                    width: 6px;
-                    height: 6px;
-                    background: var(--primary);
-                    border: 1px solid var(--border);
-                    flex-shrink: 0;
-                }
-
-                .pill-tooltip {
-                    position: absolute;
-                    bottom: calc(100% + 8px);
                     left: 50%;
-                    transform: translateX(-50%) translateY(4px) scale(0.92);
-                    background: var(--foreground);
-                    color: var(--card);
-                    font-size: 10.5px;
-                    font-weight: 700;
-                    padding: 5px 10px;
-                    white-space: nowrap;
+                    width: 112px;
+                    height: 26px;
+                    transform: translateX(-50%) rotate(-1.5deg);
+                    background: rgba(255, 255, 255, 0.72);
+                    border-left: 2px dashed rgba(17, 17, 17, 0.28);
+                    border-right: 2px dashed rgba(17, 17, 17, 0.28);
+                    box-shadow: 0 2px 4px rgba(17, 17, 17, 0.08);
+                    backdrop-filter: blur(2px);
+                    z-index: 25;
                     pointer-events: none;
-                    opacity: 0;
-                    border: 1.5px solid var(--border);
-                    box-shadow: 2.5px 2.5px 0 var(--primary);
-                    transition: opacity 0.18s ease, transform 0.18s ease;
-                    z-index: 50;
-                }
-
-                .skill-pill:hover .pill-tooltip {
-                    opacity: 1;
-                    transform: translateX(-50%) translateY(0) scale(1);
-                }
-
-                /* ── Card Footer ── */
-                .card-footer {
-                    display: flex;
-                    align-items: center;
-                    justify-content: space-between;
-                    margin-top: 22px;
-                    padding-top: 14px;
-                    border-top: 1.5px dashed rgba(17, 17, 17, 0.25);
-                    gap: 12px;
-                    flex-wrap: wrap;
-                }
-
-                .footer-status {
-                    display: flex;
-                    align-items: center;
-                    gap: 8px;
-                    font-size: 11.5px;
-                    font-weight: 700;
-                    color: var(--muted-foreground);
-                }
-
-                .status-dot {
-                    width: 8px;
-                    height: 8px;
-                    border-radius: 999px;
-                    border: 1.5px solid var(--border);
-                    display: inline-block;
-                }
-
-                .status-dot.cyan { background: #38bdf8; }
-                .status-dot.green { background: #22c55e; }
-                .status-dot.amber { background: #f59e0b; }
-                .status-dot.emerald { background: #10b981; }
-
-                .footer-right {
-                    display: flex;
-                    align-items: center;
-                    gap: 12px;
-                }
-
-                .hand-note-small {
-                    font-family: var(--font-hand);
-                    font-size: 21px;
-                    font-weight: 700;
-                    color: var(--foreground);
-                    transform: rotate(-4deg);
-                }
-
-                .item-count-badge {
-                    background: var(--foreground);
-                    color: var(--card);
-                    font-size: 10.5px;
-                    font-weight: 800;
-                    padding: 4px 9px;
-                    letter-spacing: 0.05em;
-                }
-
-                /* ── Outside Card Caption ── */
-                .chapter-caption {
-                    display: flex;
-                    justify-content: space-between;
-                    align-items: center;
-                    padding: 14px 8px 0;
-                    font-family: var(--font-hand);
-                    font-size: 27px;
-                    font-weight: 700;
-                    color: var(--foreground);
-                }
-
-                .chapter-caption svg {
-                    width: 30px;
-                    height: 30px;
-                }
-
-                /* ── Bottom Closing Note ── */
-                .bottom-note {
-                    display: flex;
-                    justify-content: center;
-                    align-items: center;
-                    gap: 18px;
-                    padding: 24px 0 60px;
-                }
-
-                .bottom-note .hand-note {
-                    font-size: 33px;
-                    transform: rotate(-2.5deg);
-                    background: var(--card);
-                    padding: 6px 20px;
-                    border: 2px solid var(--border);
-                    box-shadow: 4px 4px 0 var(--foreground);
-                }
-
-                .bottom-note svg {
-                    color: var(--foreground);
-                    width: 34px;
-                    height: 34px;
-                }
-
-                /* ── Responsive Breakpoints ── */
-                @media (max-width: 900px) {
-                    .toolkit-main { padding: 44px 24px 0; }
-                    .heading-note { right: 0; top: 4px; }
-                    .heading-note .hand-note { font-size: 25px; }
-                    .scrap-board { grid-template-columns: 1fr; gap: 44px; }
-                    .toolkit-chapter.ai,
-                    .toolkit-chapter.backend,
-                    .toolkit-chapter.languages { margin-top: 8px; }
-                    .filter-count { display: none; }
-                }
-
-                @media (max-width: 600px) {
-                    .toolkit-main { padding: 36px 16px 0; }
-                    .toolkit-heading h1 { font-size: 50px; }
-                    .heading-note {
-                        position: static;
-                        flex-direction: row;
-                        justify-content: space-between;
-                        margin-top: 18px;
-                    }
-                    .heading-note .arrow-container { display: none; }
-                    .paper-body { padding: 20px; }
-                    .code-sample { margin: 14px -20px; font-size: 11.5px; }
-                    .storage-paradigms { grid-template-columns: repeat(2, 1fr); }
-                    .chapter-intro h2 { font-size: 22px; }
-                    .chapter-number { font-size: 48px; }
-                    .bottom-note .hand-note { font-size: 24px; text-align: center; }
                 }
             `}</style>
         </section>
     );
-}
+};
+
+export default Skills;
