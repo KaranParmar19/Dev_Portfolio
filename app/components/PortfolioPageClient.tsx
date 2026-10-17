@@ -16,7 +16,7 @@ import { useLenis } from '@/lenis/LenisScroll';
 import ScrollToTopProgress from './ScrollToTopProgress';
 import PageTearTransition from './PageTearTransition';
 import CurtainLoadScreen from './CurtainLoadScreen';
-import ScrollBlurByAki from './ScrollBlurByAki';
+import BottomScrollBlur from './BottomScrollBlur';
 import SectionMorph from './SectionMorph';
 
 const INTRO_SESSION_KEY = 'portfolio-intro-played';
@@ -226,10 +226,8 @@ const PortfolioPageClient = () => {
                 <ContactMain />
             </div>
 
-            {/* Progressive Bottom Scroll Blur (ScrollBlurByAki) */}
-            <div className="fixed bottom-0 left-0 right-0 h-24 sm:h-32 z-30 pointer-events-none" aria-hidden="true">
-                <ScrollBlurByAki direction="bottom" blur={20} quality="high" />
-            </div>
+            {/* Progressive Bottom Scroll Blur (ScrollBlurByAki: auto-hides at bottom so footer is crystal clear) */}
+            <BottomScrollBlur />
 
             <ScrollToTopProgress />
 

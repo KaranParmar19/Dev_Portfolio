@@ -228,7 +228,7 @@ const ContactPage = () => {
                 </div>
 
                 {/* --- NEW EDITORIAL METADATA FOOTER --- */}
-                <div className="w-full max-w-container flex flex-col md:flex-row justify-between items-start md:items-end mt-16 border-t-2 border-black/10 pt-6 gap-y-6 font-mono text-xs sm:text-sm tracking-widest uppercase text-gray-500">
+                <div id="contact-editorial-footer" className="w-full max-w-container flex flex-col md:flex-row justify-between items-start md:items-end mt-16 border-t-2 border-black/10 pt-6 gap-y-6 font-mono text-xs sm:text-sm tracking-widest uppercase text-gray-500">
 
                     {/* Location */}
                     <div className="flex flex-col gap-1">
