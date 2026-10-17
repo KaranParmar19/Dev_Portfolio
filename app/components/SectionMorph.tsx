@@ -30,25 +30,25 @@ export interface SectionMorphProps {
 
 const PRESETS = {
     smooth: {
-        spring: { stiffness: 120, damping: 28, mass: 0.8 },
-        sensitivity: 0.95,
-        overshoot: 0.05,
-        verticalShift: 6,
+        spring: { stiffness: 140, damping: 30, mass: 0.8 },
+        sensitivity: 0.55,
+        overshoot: 0.03,
+        verticalShift: 4,
         smoothing: 0.14,
     },
     elastic: {
-        spring: { stiffness: 80, damping: 14, mass: 1 },
-        sensitivity: 1.35,
-        overshoot: 0.22,
-        verticalShift: 14,
-        smoothing: 0.22,
+        spring: { stiffness: 125, damping: 24, mass: 0.85 },
+        sensitivity: 0.65,
+        overshoot: 0.06,
+        verticalShift: 5,
+        smoothing: 0.16,
     },
     cinematic: {
-        spring: { stiffness: 95, damping: 24, mass: 1 },
-        sensitivity: 1.1,
-        overshoot: 0.1,
-        verticalShift: 10,
-        smoothing: 0.18,
+        spring: { stiffness: 110, damping: 26, mass: 0.9 },
+        sensitivity: 0.6,
+        overshoot: 0.05,
+        verticalShift: 5,
+        smoothing: 0.16,
     },
 };
 
@@ -65,18 +65,18 @@ function mix(from: number, to: number, amount: number): number {
 export default function SectionMorph({
     topColor = '#111111',
     bottomColor = '#F4F1E8',
-    visualHeight = 250,
-    curveDepth = 150,
+    visualHeight = 150,
+    curveDepth = 85,
     curveWidth = 72,
     responseMode = 'elastic',
-    sensitivity = 1.35,
-    velocitySmoothing = 0.22,
-    stiffness = 80,
-    damping = 14,
-    mass = 1,
-    overshoot = 0.05,
+    sensitivity = 0.65,
+    velocitySmoothing = 0.16,
+    stiffness = 125,
+    damping = 24,
+    mass = 0.85,
+    overshoot = 0.06,
     settleDelay = 70,
-    verticalShift = 6,
+    verticalShift = 5,
     edgeTension = 78,
     highlightStrength = 0.08,
     reverseMorph = false,
@@ -269,21 +269,12 @@ export default function SectionMorph({
 
     const edgeMask = `linear-gradient(to bottom, transparent 0px, #000 ${OVERSCAN}px, #000 calc(100% - ${OVERSCAN}px), transparent 100%)`;
 
-    const bleedStyles: React.CSSProperties = fullBleed
-        ? {
-              position: 'relative',
-              left: '50%',
-              width: '100vw',
-              minWidth: '100vw',
-              maxWidth: '100vw',
-              marginLeft: '-50vw',
-          }
-        : {
-              position: 'relative',
-              width: '100%',
-              minWidth: '100%',
-              maxWidth: '100%',
-          };
+    const bleedStyles: React.CSSProperties = {
+        position: 'relative',
+        width: '100%',
+        minWidth: '100%',
+        maxWidth: '100%',
+    };
 
     return (
         <div

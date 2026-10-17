@@ -194,20 +194,20 @@ const ContactPage = () => {
                     <div
                         onMouseEnter={handleEnter2}
                         onMouseLeave={handleLeave2}
-                        className="group flex overflow-visible items-end justify-between gap-4 cursor-pointer border-b-4 border-transparent hover:border-[#e26d5c] transition-colors duration-500 md:pb-4"
+                        className="group flex overflow-visible items-end justify-between gap-3 sm:gap-4 cursor-pointer border-b-4 border-transparent hover:border-[#e26d5c] transition-colors duration-500 md:pb-4"
                     >
-                        <h1 className="text-5xl sm:text-6xl lg:text-[10rem] font-black font-futura uppercase leading-none tracking-tighter group-hover:text-[#e26d5c] transition-colors duration-500">
+                        <h1 className="text-3xl min-[380px]:text-4xl sm:text-6xl lg:text-[7.5rem] xl:text-[9.5rem] font-black font-futura uppercase leading-none tracking-tighter group-hover:text-[#e26d5c] transition-colors duration-500">
                             Let&apos;s Talk
                         </h1>
 
-                        <div className="overflow-visible md:mb-6">
+                        <div className="overflow-visible mb-1 sm:mb-2 md:mb-6 shrink-0">
                             <svg
                                 xmlns="http://www.w3.org/2000/svg"
                                 fill="none"
                                 viewBox="0 0 24 24"
                                 strokeWidth={1.5}
                                 stroke="currentColor"
-                                className="size-12 sm:size-16 lg:size-24 overflow-visible text-black group-hover:text-[#e26d5c] transition-colors duration-500"
+                                className="size-8 min-[380px]:size-10 sm:size-14 lg:size-20 overflow-visible text-black group-hover:text-[#e26d5c] transition-colors duration-500"
                                 style={{ overflow: "visible" }}
                             >
                                 <path

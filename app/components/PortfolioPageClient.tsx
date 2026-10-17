@@ -197,8 +197,8 @@ const PortfolioPageClient = () => {
                 <SectionMorph
                     topColor="#fe9066"
                     bottomColor="#f4f1eb"
-                    visualHeight={250}
-                    curveDepth={155}
+                    visualHeight={150}
+                    curveDepth={85}
                     responseMode="elastic"
                 />
             </div>
@@ -207,8 +207,8 @@ const PortfolioPageClient = () => {
                 <SectionMorph
                     topColor="#f4f1eb"
                     bottomColor="#f3865e"
-                    visualHeight={250}
-                    curveDepth={155}
+                    visualHeight={150}
+                    curveDepth={85}
                     responseMode="elastic"
                 />
             </div>
@@ -217,8 +217,8 @@ const PortfolioPageClient = () => {
                 <SectionMorph
                     topColor="#f3865e"
                     bottomColor="#f4f1eb"
-                    visualHeight={250}
-                    curveDepth={155}
+                    visualHeight={150}
+                    curveDepth={85}
                     responseMode="elastic"
                 />
             </div>

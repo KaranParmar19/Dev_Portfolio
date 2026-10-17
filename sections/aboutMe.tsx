@@ -59,8 +59,7 @@ const AboutMe = () => {
     }, { scope: containerRef });
 
     return (
-        // Adjusted padding: py-12 on mobile, py-20 on larger screens
-        <section ref={containerRef} className="relative w-full py-[5%] bg-[#fe9066] flex items-center justify-center overflow-hidden">
+        <section ref={containerRef} className="relative w-full py-12 md:py-20 px-4 sm:px-6 md:px-10 bg-[#fe9066] flex items-center justify-center overflow-hidden">
             <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden" aria-hidden="true">
                 <div className="absolute right-0 lg:-left-8 top-40 lg:top-14 w-28 sm:w-36 md:w-48 aspect-square -rotate-12">
                     <Image
@@ -84,13 +83,13 @@ const AboutMe = () => {
             </div>
 
             {/* Adjusted gap: gap-10 on mobile, gap-16 on larger screens */}
-            <div className="relative max-w-container py-12 md:py-20 w-full grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-center z-10">
+            <div className="relative max-w-container w-full grid grid-cols-1 lg:grid-cols-2 gap-8 sm:gap-10 lg:gap-16 items-center z-10">
 
                 {/* Left Column: Heading and Intro */}
-                <div className="flex flex-col items-start space-y-4 md:space-y-6">
+                <div className="flex flex-col items-start space-y-3 sm:space-y-4 md:space-y-6">
                     <div className="inline-block relative">
                         {/* Scaled text slightly better for extra small screens */}
-                        <h2 className="about-heading text-[2.5rem] leading-[0.9] xs:text-5xl sm:text-6xl lg:text-[7rem] font-black uppercase text-[#fffdf2] sm:drop-shadow-[6px_6px_0px_#111111] drop-shadow-[2px_2px_0px_#111111] tracking-tighter font-futura will-change-transform flex flex-col items-start select-none">
+                        <h2 className="about-heading text-[2.2rem] min-[380px]:text-[2.6rem] leading-[0.9] sm:text-6xl lg:text-[7rem] font-black uppercase text-[#fffdf2] sm:drop-shadow-[6px_6px_0px_#111111] drop-shadow-[2px_2px_0px_#111111] tracking-tighter font-futura will-change-transform flex flex-col items-start select-none">
                             <LiquidHeading
                                 as="span"
                                 text="ABOUT"
@@ -110,10 +109,10 @@ const AboutMe = () => {
                     </div>
 
                     {/* Scaled intro text down for mobile to prevent overflow */}
-                    <h3 className="intro-text will-change-transform text-2xl sm:text-3xl md:text-5xl font-bold text-black mt-2 sm:mt-4 font-kaku leading-tight">
+                    <h3 className="intro-text will-change-transform text-xl sm:text-3xl md:text-5xl font-bold text-black mt-2 sm:mt-4 font-kaku leading-tight">
                         Hi, I&apos;m <br className="md:hidden" />
                         {/* Added whitespace-nowrap so your name doesn't break into two lines in the box */}
-                        <span className="text-[#F18961] bg-[#fffdf2] px-2 py-1 rotate-2 inline-block font-futura shadow-[4px_4px_0px_#111111] whitespace-nowrap mt-2 md:mt-0">
+                        <span className="text-[#F18961] bg-[#fffdf2] px-2 py-0.5 sm:py-1 rotate-2 inline-block font-futura shadow-[3px_3px_0px_#111111] sm:shadow-[4px_4px_0px_#111111] whitespace-nowrap mt-1.5 md:mt-0">
                             Karan Parmar
                         </span>
                     </h3>
@@ -121,7 +120,6 @@ const AboutMe = () => {
 
                 {/* Right Column: The Scrapbook Bio Card */}
                 <div className="w-full max-w-xl mx-auto lg:mx-0 mt-4 md:mt-0 relative">
-
 
                     <div ref={stickerRef} className='absolute top-0 right-0 z-50 w-[25%] sm:w-[20%] md:w-[18%] aspect-square translate-x-[30%] scale-50 opacity-0 -translate-y-[30%] pointer-events-none'>
                         <Image
@@ -135,26 +133,26 @@ const AboutMe = () => {
 
                     <div
                         ref={cardRef}
-                        className="bg-[#fffdf2] will-change-transform border-4 border-black p-5 sm:p-8 md:p-12 shadow-[6px_6px_0px_#111111] sm:shadow-[12px_12px_0px_#111111] relative"
+                        className="bg-[#fffdf2] will-change-transform border-[3px] sm:border-4 border-black p-4 sm:p-8 md:p-12 shadow-[6px_6px_0px_#111111] sm:shadow-[12px_12px_0px_#111111] relative"
                     >
                         <style>{handwritingFontImport}</style>
                         {/* Scaled the tape down on mobile (w-24 h-8) and up on sm+ (sm:w-32 sm:h-10) */}
-                        <div className="absolute -top-4 sm:-top-5 left-1/2 -translate-x-1/2 w-24 h-8 sm:w-32 sm:h-10 bg-white/90 border-2 border-black/80 rotate-[-4deg] z-20 shadow-sm"></div>
+                        <div className="absolute -top-3.5 sm:-top-5 left-1/2 -translate-x-1/2 w-24 h-7 sm:w-32 sm:h-10 bg-white/90 border-2 border-black/80 rotate-[-4deg] z-20 shadow-sm"></div>
 
-                        <p className="text-2xl sm:text-3xl md:text-4xl font-medium leading-[1.3] text-black/90" style={{ fontFamily: 'Caveat, cursive' }}>
+                        <p className="text-xl sm:text-2xl md:text-3xl font-medium leading-[1.3] text-black/90" style={{ fontFamily: 'Caveat, cursive' }}>
                             I am a driven <strong className="text-black font-black">Full-Stack & Systems Developer</strong> with a deep passion for building scalable, high-performance web applications and distributed architectures.
                         </p>
 
-                        <p className="text-2xl sm:text-3xl md:text-4xl font-medium leading-[1.3] text-black/90 mt-4 md:mt-6" style={{ fontFamily: 'Caveat, cursive' }}>
+                        <p className="text-xl sm:text-2xl md:text-3xl font-medium leading-[1.3] text-black/90 mt-3 sm:mt-4 md:mt-6" style={{ fontFamily: 'Caveat, cursive' }}>
                             My core expertise lies in architecting
-                            <span className="bg-[#F18961] px-2 py-0.5 border border-black font-bold -rotate-2 inline-block mx-1 shadow-[2px_2px_0px_rgba(0,0,0,1)] whitespace-nowrap">
+                            <span className="bg-[#F18961] px-1.5 sm:px-2 py-0.5 border border-black font-bold -rotate-2 inline-block mx-1 shadow-[2px_2px_0px_rgba(0,0,0,1)] whitespace-nowrap">
                                 distributed pipelines
                             </span>
                             and real-time systems — from asynchronous Celery & Redis task queues and WebSockets to WebRTC collaborative workspaces and AST-aware AI agents with LangChain.
                         </p>
 
-                        <p className="text-2xl sm:text-3xl md:text-4xl font-medium leading-[1.3] text-black/90 mt-4 md:mt-6" style={{ fontFamily: 'Caveat, cursive' }}>
-                            Backed by <strong className="text-black font-black underline decoration-[crimson] decoration-[3px] md:decoration-4 underline-offset-3">400+ problems solved on LeetCode</strong> and consistent daily practice, I focus on writing clean, resilient, and optimized code that powers demanding applications.
+                        <p className="text-xl sm:text-2xl md:text-3xl font-medium leading-[1.3] text-black/90 mt-3 sm:mt-4 md:mt-6" style={{ fontFamily: 'Caveat, cursive' }}>
+                            Backed by <strong className="text-black font-black underline decoration-[crimson] decoration-[2px] sm:decoration-[3px] md:decoration-4 underline-offset-3">400+ problems solved on LeetCode</strong> and consistent daily practice, I focus on writing clean, resilient, and optimized code that powers demanding applications.
                         </p>
 
                     </div>

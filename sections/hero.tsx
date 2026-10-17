@@ -118,17 +118,17 @@ const Hero: React.FC<HeroProps> = ({ onAnimationComplete, shouldStartAnimation =
 
     return (
         <div
-            className="w-full h-full flex items-end justify-end px-4 sm:px-8 md:px-12 py-4 relative"
+            className="w-full h-full flex items-end justify-end px-3 sm:px-8 md:px-12 py-3 sm:py-4 relative"
             ref={containerRef}
         >
-            <div className="flex font-neulis items-stretch gap-6 md:gap-12 sm:flex-row flex-col w-full justify-end">
+            <div className="flex font-neulis items-stretch gap-3 sm:gap-6 md:gap-12 sm:flex-row flex-col w-full justify-end">
 
                 <div
                     ref={leftContentRef}
-                    className={`flex flex-col justify-end text-right pb-3 md:pb-6 ${shouldStartAnimation ? 'invisible' : ''}`}
+                    className={`flex flex-col justify-end text-right pb-2 sm:pb-3 md:pb-6 ${shouldStartAnimation ? 'invisible' : ''}`}
                 >
-                    <div ref={nameContentRef} className="relative inline-block ml-auto pb-3">
-                        <p className="text-xl md:text-2xl font-bold tracking-tight text-black">Karan Parmar</p>
+                    <div ref={nameContentRef} className="relative inline-block ml-auto pb-2 sm:pb-3">
+                        <p className="text-lg sm:text-xl md:text-2xl font-bold tracking-tight text-black">Karan Parmar</p>
 
                         {/* Sleek, professional geometric accent line replacing the sketch */}
                         <div ref={techAccentLineRef} className="absolute bottom-0 right-0 h-[2px] w-[95%] bg-[#e26d5c] flex items-center justify-start flex-row-reverse">
@@ -136,14 +136,14 @@ const Hero: React.FC<HeroProps> = ({ onAnimationComplete, shouldStartAnimation =
                         </div>
                     </div>
 
-                    <div className="mt-4 md:mt-5 text-sm md:text-base text-gray-600 font-medium tracking-wide flex flex-col items-end border-r-2 border-black/10 pr-4">
+                    <div className="mt-2 sm:mt-4 md:mt-5 text-xs sm:text-sm md:text-base text-gray-600 font-medium tracking-wide flex flex-col items-end border-r-2 border-black/10 pr-3 sm:pr-4">
                         <p>Full-Stack Developer</p>
                         <p className="text-gray-400">&</p>
                         <p>Systems Engineer</p>
                     </div>
 
-                    <div className="mt-6 md:mt-8 flex justify-end">
-                        <p className="text-xs font-mono font-bold tracking-widest text-white bg-foreground px-3 py-1 uppercase">
+                    <div className="mt-3 sm:mt-6 md:mt-8 flex justify-end">
+                        <p className="text-[10px] sm:text-xs font-mono font-bold tracking-widest text-white bg-foreground px-2.5 sm:px-3 py-0.5 sm:py-1 uppercase">
                             Est. 2026
                         </p>
                     </div>
@@ -152,7 +152,7 @@ const Hero: React.FC<HeroProps> = ({ onAnimationComplete, shouldStartAnimation =
                 {/* Technical Vertical Divider */}
                 <div
                     ref={lineRef}
-                    className={`h-[2px] w-full sm:h-auto sm:w-[3px] bg-black shrink-0 my-2 md:my-4 relative ${shouldStartAnimation ? 'invisible' : ''}`}
+                    className={`h-[2px] w-full sm:h-auto sm:w-[3px] bg-black shrink-0 my-1 sm:my-2 md:my-4 relative ${shouldStartAnimation ? 'invisible' : ''}`}
                 >
                     {/* Crosshair accents on the divider line to enhance the technical look */}
                     <div className="hidden sm:block absolute top-0 left-1/2 -translate-x-1/2 w-4 h-px bg-black" />
@@ -160,7 +160,7 @@ const Hero: React.FC<HeroProps> = ({ onAnimationComplete, shouldStartAnimation =
                 </div>
 
 
-                <div className="text-[4.5rem] px-1 sm:text-[6rem] md:text-[8rem] xl:text-[11rem] items-end font-black flex flex-col uppercase font-futura leading-none">
+                <div className="text-[3.5rem] min-[380px]:text-[4.2rem] sm:text-[6rem] md:text-[7.5rem] lg:text-[9rem] xl:text-[11rem] px-1 items-end font-black flex flex-col uppercase font-futura leading-none">
                     <p ref={textRef} className={shouldStartAnimation ? 'invisible' : ''}>
                         Port <br /> Folio
                     </p>
