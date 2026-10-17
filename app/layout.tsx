@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
 import Footer from "./components/Footer";
+import VisitorTracker from "./components/VisitorTracker";
 import { Syne, Space_Grotesk, Caveat } from 'next/font/google'
 import { LenisProvider } from "@/lenis/LenisScroll";
 
@@ -106,6 +107,7 @@ export default function RootLayout({
           }}
         />
         <LenisProvider>
+          <VisitorTracker />
           <main className="overflow-hidden" suppressHydrationWarning>
             {children}
             <Footer />
