@@ -26,13 +26,13 @@ export const projectData: ProjectType[] = [
             'TypeScript'
         ],
         live: 'https://github.com/KaranParmar19',
-        img: '/projectImg/devlens-architecture.png',
+        img: '/projectImg/devlens-hero.png',
         gallery: [
-            '/projectImg/devlens-architecture.png',
-            '/projectImg/devlens-codeflow.png',
-            '/projectImg/devlens-chat.png',
-            '/projectImg/devlens-onboarding.png',
-            '/projectImg/devlens.png'
+            '/projectImg/devlens-hero.png',
+            '/projectImg/devlens-copilot.png',
+            '/projectImg/devlens-map.png',
+            '/projectImg/devlens-brand.png',
+            '/projectImg/devlens-pipeline.png'
         ],
         bg: 'bg-[#e3f2ff]',
     },

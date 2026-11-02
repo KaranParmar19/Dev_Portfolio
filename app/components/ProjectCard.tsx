@@ -128,8 +128,8 @@ const ProjectCard = ({ project, index, className = '' }: ProjectCardProps) => {
                             frame={{
                                 heightPct: 70,
                                 heightCap: 750,
-                                fit: "fixed",
-                                ratio: 1.45,
+                                fit: "natural",
+                                ratio: 1.8,
                                 spacing: 48,
                                 corner: 0,
                                 anchor: 50,
